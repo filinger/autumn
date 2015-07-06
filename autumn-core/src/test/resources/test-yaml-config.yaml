@@ -1,0 +1,30 @@
+%TAG !bean! com.technoirarts.autumn.bean.
+
+---
+
+!bean!SimpleTestBean
+&simpleBean
+name: SimpleTestBean
+scores:
+  - !!int 1
+  - !!int 2
+  - !!int 3
+
+---
+
+!bean!ClosedTestBean
+&closedBean
+name: "ClosedTestBean"
+
+---
+
+!bean!ImmutableTestBean
+&immutableBean
+name: "ImmutableTestBean"
+age: 42
+relative: *closedBean
+
+---
+
+!bean!TestBeanCollection
+daughters: [ *simpleBean, *closedBean, *immutableBean ]
