@@ -1,10 +1,12 @@
-package com.technoirarts.autumn;
+package com.technoirarts.autumn.spel;
 
+import com.technoirarts.autumn.BasicApplicationContext;
 import com.technoirarts.autumn.bean.Bean;
-import com.technoirarts.autumn.bean.BeanRegistryResolver;
+import com.technoirarts.autumn.bean.MapBeanRegistry;
 import com.technoirarts.autumn.exception.BeanConstructionException;
 import com.technoirarts.autumn.exception.BeanNotFoundException;
 import com.technoirarts.autumn.exception.ContextLoadException;
+import org.springframework.expression.BeanResolver;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -19,25 +21,24 @@ import java.util.Set;
  * @version $Revision$, $Date$
  * @since 1.0
  */
-public class SpelApplicationContext extends YamlApplicationContext {
+public class SpelApplicationContext extends BasicApplicationContext {
 
     private ExpressionParser parser;
     private StandardEvaluationContext context;
-    private BeanRegistryResolver resolver;
 
     public SpelApplicationContext() {
-        super();
+        this.registry = new MapBeanRegistry();
+        this.resolver = new SpelBeanResolver(this.registry);
         this.parser = new SpelExpressionParser();
         this.context = new StandardEvaluationContext();
-        this.resolver = new BeanRegistryResolver(registry);
 
-        context.setBeanResolver(resolver);
+        context.setBeanResolver((BeanResolver) resolver);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void processDocument(Object document) {
-        traverseBeanGraph((Map<String, Object>) document);
+    protected void processNode(Object node) {
+        traverseBeanGraph((Map<String, Object>) node);
     }
 
     private void traverseBeanGraph(Map<String, Object> map) {

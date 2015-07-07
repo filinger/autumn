@@ -1,5 +1,6 @@
-package com.technoirarts.autumn;
+package com.technoirarts.autumn.yaml;
 
+import com.technoirarts.autumn.ApplicationContext;
 import com.technoirarts.autumn.bean.*;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -32,8 +33,7 @@ public class YamlApplicationContextTest {
 
     @Test
     public void testYamlContextLoading() {
-        YamlApplicationContext context = new YamlApplicationContext();
-        context.setResourceReader(yamlReader);
+        YamlApplicationContext context = new YamlApplicationContext(yamlReader);
 
         testTagShortcut(context);
         testSimpleBean(context);

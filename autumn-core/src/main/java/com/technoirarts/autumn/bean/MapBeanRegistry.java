@@ -27,14 +27,14 @@ public class MapBeanRegistry implements BeanRegistry {
     }
 
     @Override
-    public Bean findById(String id) {
-        return beanIdMap.get(id);
+    public Bean findById(String beanId) {
+        return beanIdMap.get(beanId);
     }
 
     @Override
-    public Bean findByType(String className) {
+    public Bean findByType(String beanType) {
         try {
-            return findByType(Class.forName(className));
+            return findByType(Class.forName(beanType));
         } catch (ClassNotFoundException e) {
             return null;
         }

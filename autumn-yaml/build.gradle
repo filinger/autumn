@@ -5,6 +5,10 @@ repositories {
 }
 
 dependencies {
+    compile project(':autumn-core')
+
+    compile 'com.esotericsoftware.yamlbeans:yamlbeans:1.09'
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
 }

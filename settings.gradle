@@ -1,2 +1,4 @@
 include 'autumn-core'
+include 'autumn-spel'
+include 'autumn-yaml'
 

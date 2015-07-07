@@ -1,6 +1,5 @@
 package com.technoirarts.autumn;
 
-import java.io.Reader;
 import java.util.List;
 
 /**
@@ -12,19 +11,12 @@ import java.util.List;
 public interface ApplicationContext {
 
     /**
-     * Sets the YAML data source for this context.
-     *
-     * @param resourceReader reader which reads YAML resource.
-     */
-    void setResourceReader(Reader resourceReader);
-
-    /**
-     * Loads all documents described in the YAML config.
+     * Loads all nodes present in the configuration.
      */
     void loadAll();
 
     /**
-     * Loads only sub-document from the YAML config.
+     * Loads only next node from the configuration.
      */
     void loadNext();
 

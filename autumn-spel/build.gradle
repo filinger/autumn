@@ -5,6 +5,10 @@ repositories {
 }
 
 dependencies {
+    compile project(':autumn-core')
+
+    compile 'org.springframework:spring-expression:4.1.7.RELEASE'
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
 }
