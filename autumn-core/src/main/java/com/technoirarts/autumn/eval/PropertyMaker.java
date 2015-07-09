@@ -23,7 +23,6 @@ public class PropertyMaker {
 
     private List<PropertyEvaluator> getAvailableEvaluators() {
         ArrayList<PropertyEvaluator> evaluators = new ArrayList<>();
-        evaluators.add(new StringPropertyEvaluator(this));
         evaluators.add(new IntPropertyEvaluator(this));
         evaluators.add(new FloatPropertyEvaluator(this));
         evaluators.add(new BoolPropertyEvaluator(this));
