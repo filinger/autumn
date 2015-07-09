@@ -1,0 +1,25 @@
+simpleBean:
+  $construct: { $class: com.technoirarts.autumn.bean.SimpleTestBean }
+  name: SimpleTestBean
+  scores:
+    - $int: 1
+    - $int: 2
+    - $int: 3
+
+closedBean:
+  $construct: { $class: com.technoirarts.autumn.bean.ClosedTestBean }
+  name: ClosedTestBean
+
+immutableBean:
+  $construct:
+    $class: com.technoirarts.autumn.bean.ImmutableTestBean
+    0: ImmutableTestBean
+    1: { $int: 42 }
+    2: { $inject: closedBean }
+
+beanCollection:
+  $construct: { $class: com.technoirarts.autumn.bean.TestBeanCollection }
+  daughters:
+    - $inject: simpleBean
+    - $inject: closedBean
+    - $inject: immutableBean

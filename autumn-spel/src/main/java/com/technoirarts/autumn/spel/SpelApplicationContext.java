@@ -2,7 +2,6 @@ package com.technoirarts.autumn.spel;
 
 import com.technoirarts.autumn.BasicApplicationContext;
 import com.technoirarts.autumn.bean.Bean;
-import com.technoirarts.autumn.bean.MapBeanRegistry;
 import com.technoirarts.autumn.exception.BeanConstructionException;
 import com.technoirarts.autumn.exception.BeanNotFoundException;
 import com.technoirarts.autumn.exception.ContextLoadException;
@@ -27,8 +26,6 @@ public class SpelApplicationContext extends BasicApplicationContext {
     private StandardEvaluationContext context;
 
     public SpelApplicationContext() {
-        this.registry = new MapBeanRegistry();
-        this.resolver = new SpelBeanResolver(this.registry);
         this.parser = new SpelExpressionParser();
         this.context = new StandardEvaluationContext();
 
