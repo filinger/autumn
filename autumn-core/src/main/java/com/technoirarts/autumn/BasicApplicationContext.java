@@ -4,7 +4,6 @@ import com.technoirarts.autumn.bean.BeanRegistry;
 import com.technoirarts.autumn.bean.BeanRegistryValueResolver;
 import com.technoirarts.autumn.bean.BeanValueResolver;
 import com.technoirarts.autumn.bean.MapBeanRegistry;
-import com.technoirarts.autumn.eval.PropertyMaker;
 import com.technoirarts.autumn.exception.ContextLoadException;
 
 import java.util.List;
@@ -19,13 +18,11 @@ public abstract class BasicApplicationContext implements ApplicationContext {
 
     protected BeanRegistry registry;
     protected BeanValueResolver resolver;
-    protected PropertyMaker maker;
     protected NodeReader reader;
 
     public BasicApplicationContext() {
         this.registry = new MapBeanRegistry();
         this.resolver = new BeanRegistryValueResolver(this.registry);
-        this.maker = new PropertyMaker(this.resolver);
     }
 
     protected abstract void processNode(Object node);
