@@ -1,8 +1,9 @@
 package com.technoirarts.autumn.eval;
 
-import com.technoirarts.autumn.exception.BeanConstructionException;
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -23,32 +24,37 @@ public class ClassPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
-    public Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) {
+    public Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
         String className = (String) descriptor;
         List constructorArguments = (List) maker.makeValue(rest.values());
         return constructObject(className, constructorArguments);
     }
 
-    private Object constructObject(String className, Collection args) {
+    private Object constructObject(String className, Collection args) throws PropertyEvaluationException {
         try {
             Class<?> clazz = Class.forName(className);
-            if (args == null || args.isEmpty()) {
-                return clazz.getConstructor().newInstance();
-            }
             return constructObject(clazz, args);
-        } catch (Exception e) {
-            throw new BeanConstructionException("Cannot construct class: " + className + " with args: " + args);
+        } catch (ClassNotFoundException e) {
+            throw new PropertyEvaluationException(this, "cannot find class: " + className, e);
+        } catch (InvocationTargetException e) {
+            throw new PropertyEvaluationException(this, "cannot invoke constructor of class: " + className, e);
+        } catch (NoSuchMethodException e) {
+            throw new PropertyEvaluationException(this, "cannot find constructor of class: " + className, e);
+        } catch (InstantiationException e) {
+            throw new PropertyEvaluationException(this, "cannot make instance of class: " + className, e);
+        } catch (IllegalAccessException e) {
+            throw new PropertyEvaluationException(this, "cannot access constructor of class: " + className, e);
         }
     }
 
-    private Object constructObject(Class<?> clazz, Collection args) {
-        try {
-            Class<?>[] signature = getConstructorSignature(args);
-            Constructor<?> constructor = findSuitableConstructor(clazz, signature);
-            return constructor.newInstance(args.toArray());
-        } catch (Exception e) {
-            throw new BeanConstructionException("Cannot instantiate new bean of class: " + clazz.getSimpleName(), e);
+    private Object constructObject(Class<?> clazz, Collection args)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (args == null || args.isEmpty()) {
+            return clazz.getConstructor().newInstance();
         }
+        Class<?>[] signature = getConstructorSignature(args);
+        Constructor<?> constructor = findSuitableConstructor(clazz, signature);
+        return constructor.newInstance(args.toArray());
     }
 
     private Class<?>[] getConstructorSignature(Collection args) {

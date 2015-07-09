@@ -1,5 +1,7 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
+
 import java.util.Map;
 
 /**
@@ -20,7 +22,7 @@ public class BoolPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
-    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) {
+    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
         return Boolean.parseBoolean((String) descriptor);
     }
 }

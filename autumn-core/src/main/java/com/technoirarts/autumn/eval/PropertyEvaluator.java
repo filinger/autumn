@@ -1,5 +1,7 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
+
 /**
  * @author Filinger
  * @author Filinger (current maintainer)
@@ -10,5 +12,5 @@ public interface PropertyEvaluator {
 
     boolean canEvaluate(Object property);
 
-    Object evaluate(Object property);
+    Object evaluate(Object property) throws PropertyEvaluationException;
 }

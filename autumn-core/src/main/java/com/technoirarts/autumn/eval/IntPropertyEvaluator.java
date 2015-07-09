@@ -1,5 +1,7 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
+
 import java.util.Map;
 
 /**
@@ -20,7 +22,11 @@ public class IntPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
-    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) {
-        return Integer.parseInt((String) descriptor);
+    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
+        try {
+            return Integer.parseInt((String) descriptor);
+        } catch (NumberFormatException e) {
+            throw new PropertyEvaluationException(this, "cannot parse specified float: " + descriptor);
+        }
     }
 }

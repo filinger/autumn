@@ -1,5 +1,7 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,15 +24,15 @@ public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator
     }
 
     @Override
-    protected Object checkedEvaluate(Object property) {
+    protected Object checkedEvaluate(Object property) throws PropertyEvaluationException {
         @SuppressWarnings("unchecked")
         Map<String, Object> properties = (Map<String, Object>) property;
-        Map<String, Object> copiedProperties = new HashMap<>(properties);
-        Object descriptor = copiedProperties.remove(getDescriptor());
-        return evaluateDescriptor(descriptor, copiedProperties);
+        Map<String, Object> propertiesCopy = new HashMap<>(properties);
+        Object descriptor = propertiesCopy.remove(getDescriptor());
+        return evaluateDescriptor(descriptor, propertiesCopy);
     }
 
     protected abstract String getDescriptor();
 
-    protected abstract Object evaluateDescriptor(Object descriptor, Map<String, Object> rest);
+    protected abstract Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException;
 }

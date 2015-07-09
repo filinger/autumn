@@ -1,6 +1,7 @@
 package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanValueResolver;
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +34,10 @@ public class PropertyMaker {
         return evaluators;
     }
 
-    public Object makeValue(Object property) {
+    public Object makeValue(Object property) throws PropertyEvaluationException {
         for (PropertyEvaluator evaluator : evaluators) {
             if (evaluator.canEvaluate(property)) {
-                Object result = evaluator.evaluate(property);
-                if (result != null) {
-                    return result;
-                }
-                throw new IllegalStateException("Evaluator " + evaluator + " returned null for: " + property);
+                return evaluator.evaluate(property);
             }
         }
         return property;

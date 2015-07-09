@@ -1,5 +1,7 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -22,7 +24,7 @@ public class ArrayPropertyEvaluator extends BasicPropertyEvaluator {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Object checkedEvaluate(Object property) {
+    public Object checkedEvaluate(Object property) throws PropertyEvaluationException {
         Collection properties = (Collection) property;
         ArrayList evaluated = new ArrayList(properties.size());
         for (Object prop : properties) {

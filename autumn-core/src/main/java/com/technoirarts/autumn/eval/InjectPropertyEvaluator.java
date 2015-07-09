@@ -1,6 +1,7 @@
 package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanValueResolver;
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.Map;
 
@@ -25,13 +26,16 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
-    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) {
+    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
         String idOrType = (String) descriptor;
         Object resolved = resolver.getValueById(idOrType);
         if (resolved != null) {
             return resolved;
         }
-        return resolver.getValueByType(idOrType);
-        // TODO: throw error?
+        resolved = resolver.getValueByType(idOrType);
+        if (resolved != null) {
+            return resolved;
+        }
+        throw new PropertyEvaluationException(this, "was unable to find requested bean: " + descriptor);
     }
 }

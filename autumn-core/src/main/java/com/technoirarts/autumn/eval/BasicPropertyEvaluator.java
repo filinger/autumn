@@ -1,5 +1,7 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
+
 /**
  * @author Filinger
  * @author Filinger (current maintainer)
@@ -15,12 +17,12 @@ public abstract class BasicPropertyEvaluator implements PropertyEvaluator {
     }
 
     @Override
-    public Object evaluate(Object property) {
+    public Object evaluate(Object property) throws PropertyEvaluationException {
         if (canEvaluate(property)) {
             return checkedEvaluate(property);
         }
-        return property;
+        throw new PropertyEvaluationException(this, "this evaluator is not intended for property: " + property);
     }
 
-    protected abstract Object checkedEvaluate(Object property);
+    protected abstract Object checkedEvaluate(Object property) throws PropertyEvaluationException;
 }

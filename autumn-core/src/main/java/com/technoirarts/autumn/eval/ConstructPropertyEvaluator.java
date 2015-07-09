@@ -1,6 +1,6 @@
 package com.technoirarts.autumn.eval;
 
-import com.technoirarts.autumn.exception.BeanConstructionException;
+import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -23,13 +23,13 @@ public class ConstructPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
-    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) {
+    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
         Object beanInstance = maker.makeValue(descriptor);
         setBeanProperties(beanInstance, rest);
         return beanInstance;
     }
 
-    private void setBeanProperties(Object instance, Map<String, Object> properties) {
+    private void setBeanProperties(Object instance, Map<String, Object> properties) throws PropertyEvaluationException {
         try {
             Class clazz = instance.getClass();
             for (Map.Entry<String, Object> property : properties.entrySet()) {
@@ -38,8 +38,10 @@ public class ConstructPropertyEvaluator extends DescriptorPropertyEvaluator {
                 Object value = maker.makeValue(property.getValue());
                 field.set(instance, value);
             }
-        } catch (Exception e) {
-            throw new BeanConstructionException("Cannot set bean properties", e);
+        } catch (IllegalAccessException e) {
+            throw new PropertyEvaluationException(this, "cannot access field for class: " + instance.getClass());
+        } catch (NoSuchFieldException e) {
+            throw new PropertyEvaluationException(this, "cannot find field: " + instance.getClass());
         }
     }
 }
