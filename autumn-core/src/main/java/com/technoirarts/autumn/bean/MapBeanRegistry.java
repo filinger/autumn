@@ -12,23 +12,24 @@ import java.util.Iterator;
  */
 public class MapBeanRegistry implements BeanRegistry {
 
-    private final HashMap<String, Bean> beanIdMap;
-    private final ArrayList<Bean> beans;
+    private final HashMap<String, Bean<?>> beans;
 
     public MapBeanRegistry() {
-        this.beanIdMap = new HashMap<>();
-        this.beans = new ArrayList<>();
+        this.beans = new HashMap<>();
     }
 
     @Override
     public void register(Bean<?> bean) {
-        beanIdMap.put(bean.getId(), bean);
-        beans.add(bean);
+        String id = bean.getId();
+        if (beans.containsKey(id)) {
+            throw new IllegalStateException("there is already a registered bean with such id: " + id);
+        }
+        beans.put(id, bean);
     }
 
     @Override
     public Bean<?> findById(String beanId) {
-        return beanIdMap.get(beanId);
+        return beans.get(beanId);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class MapBeanRegistry implements BeanRegistry {
     @SuppressWarnings("unchecked")
     public <T> ArrayList<Bean<T>> findOfType(Class<T> beanType) {
         ArrayList<Bean<T>> filtered = new ArrayList<>();
-        for (Bean bean : beans) {
+        for (Bean<?> bean : beans.values()) {
             if (bean.getType().isAssignableFrom(beanType)) {
                 filtered.add((Bean<T>) bean);
             }
