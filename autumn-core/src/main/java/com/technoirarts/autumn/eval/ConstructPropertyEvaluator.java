@@ -35,7 +35,7 @@ public class ConstructPropertyEvaluator extends DescriptorPropertyEvaluator {
             for (Map.Entry<String, Object> property : properties.entrySet()) {
                 Field field = clazz.getDeclaredField(property.getKey());
                 field.setAccessible(true);
-                Object value = maker.make(property.getValue());
+                Object value = maker.make(property.getValue(), field.getType());
                 field.set(instance, value);
             }
         } catch (IllegalAccessException e) {
@@ -43,5 +43,17 @@ public class ConstructPropertyEvaluator extends DescriptorPropertyEvaluator {
         } catch (NoSuchFieldException e) {
             throw new PropertyEvaluationException(this, "cannot find field: " + instance.getClass());
         }
+    }
+
+    @Override
+    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
+        return canEvaluate(property);
+    }
+
+    @Override
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+        T beanInstance = maker.make(descriptor, typeAdvice);
+        setBeanProperties(beanInstance, rest);
+        return beanInstance;
     }
 }

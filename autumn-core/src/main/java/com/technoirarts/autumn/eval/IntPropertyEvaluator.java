@@ -29,4 +29,15 @@ public class IntPropertyEvaluator extends DescriptorPropertyEvaluator {
             throw new PropertyEvaluationException(this, "cannot parse specified float: " + descriptor);
         }
     }
+
+    @Override
+    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
+        return canEvaluate(property) && (typeAdvice.isAssignableFrom(Integer.class) || typeAdvice.isAssignableFrom(int.class));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+        return (T) evaluateDescriptor(descriptor, rest);
+    }
 }

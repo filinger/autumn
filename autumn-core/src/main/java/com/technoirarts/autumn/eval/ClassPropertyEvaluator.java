@@ -4,7 +4,11 @@ import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Filinger
@@ -84,5 +88,26 @@ public class ClassPropertyEvaluator extends DescriptorPropertyEvaluator {
             }
         }
         return true;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
+        if (!canEvaluate(property)) {
+            return false;
+        }
+        String className = (String) ((Map<String, Object>) property).get(getDescriptor());
+        try {
+            Class<?> clazz = Class.forName(className);
+            return typeAdvice.isAssignableFrom(clazz);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+        return (T) evaluateDescriptor(descriptor, rest);
     }
 }

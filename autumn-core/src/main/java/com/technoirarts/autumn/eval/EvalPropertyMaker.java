@@ -48,4 +48,15 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
         }
         return property;
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T make(Object property, Class<T> type) throws PropertyEvaluationException {
+        for (PropertyEvaluator evaluator : evaluators) {
+            if (evaluator.canEvaluate(property)) {
+                return evaluator.evaluate(property, type);
+            }
+        }
+        return (T) property; // Just try to cast it if nothing else worked.
+    }
 }

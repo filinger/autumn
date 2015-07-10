@@ -17,6 +17,8 @@ public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator
         super(maker);
     }
 
+    protected abstract String getDescriptor();
+
     @Override
     @SuppressWarnings("unchecked")
     public boolean canEvaluate(Object property) {
@@ -32,7 +34,16 @@ public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator
         return evaluateDescriptor(descriptor, propertiesCopy);
     }
 
-    protected abstract String getDescriptor();
-
     protected abstract Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException;
+
+    @Override
+    protected <T> T checkedEvaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> properties = (Map<String, Object>) property;
+        Map<String, Object> propertiesCopy = new HashMap<>(properties);
+        Object descriptor = propertiesCopy.remove(getDescriptor());
+        return evaluateDescriptor(descriptor, propertiesCopy, typeAdvice);
+    }
+
+    protected abstract <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException;
 }

@@ -1,6 +1,6 @@
 package com.technoirarts.autumn.bean;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Filinger
@@ -10,5 +10,5 @@ import java.util.List;
  */
 public class TestBeanCollection {
 
-    public List<TestBean> daughters;
+    public Set<TestBean> daughters;
 }

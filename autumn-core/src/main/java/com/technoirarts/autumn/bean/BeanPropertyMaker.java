@@ -11,4 +11,6 @@ import com.technoirarts.autumn.exception.PropertyEvaluationException;
 public interface BeanPropertyMaker {
 
     Object make(Object property) throws PropertyEvaluationException;
+
+    <T> T make(Object property, Class<T> type) throws PropertyEvaluationException;
 }

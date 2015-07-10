@@ -13,4 +13,8 @@ public interface PropertyEvaluator {
     boolean canEvaluate(Object property);
 
     Object evaluate(Object property) throws PropertyEvaluationException;
+
+    boolean canEvaluate(Object property, Class<?> typeAdvice);
+
+    <T> T evaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException;
 }

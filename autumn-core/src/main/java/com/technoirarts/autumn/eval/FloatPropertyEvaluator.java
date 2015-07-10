@@ -29,4 +29,15 @@ public class FloatPropertyEvaluator extends DescriptorPropertyEvaluator {
             throw new PropertyEvaluationException(this, "cannot parse specified float: " + descriptor);
         }
     }
+
+    @Override
+    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
+        return canEvaluate(property) && (typeAdvice.isAssignableFrom(Float.class) || typeAdvice.isAssignableFrom(float.class));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+        return (T) evaluateDescriptor(descriptor, rest);
+    }
 }
