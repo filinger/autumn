@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class ConstructPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    public ConstructPropertyEvaluator(PropertyMaker maker) {
+    public ConstructPropertyEvaluator(EvalPropertyMaker maker) {
         super(maker);
     }
 
@@ -24,7 +24,7 @@ public class ConstructPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     @Override
     protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
-        Object beanInstance = maker.makeValue(descriptor);
+        Object beanInstance = maker.make(descriptor);
         setBeanProperties(beanInstance, rest);
         return beanInstance;
     }
@@ -35,7 +35,7 @@ public class ConstructPropertyEvaluator extends DescriptorPropertyEvaluator {
             for (Map.Entry<String, Object> property : properties.entrySet()) {
                 Field field = clazz.getDeclaredField(property.getKey());
                 field.setAccessible(true);
-                Object value = maker.makeValue(property.getValue());
+                Object value = maker.make(property.getValue());
                 field.set(instance, value);
             }
         } catch (IllegalAccessException e) {

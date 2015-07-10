@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class BoolPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    public BoolPropertyEvaluator(PropertyMaker maker) {
+    public BoolPropertyEvaluator(EvalPropertyMaker maker) {
         super(maker);
     }
 

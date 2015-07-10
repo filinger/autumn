@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class IntPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    public IntPropertyEvaluator(PropertyMaker maker) {
+    public IntPropertyEvaluator(EvalPropertyMaker maker) {
         super(maker);
     }
 

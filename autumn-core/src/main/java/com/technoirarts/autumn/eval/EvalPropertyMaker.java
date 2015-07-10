@@ -1,5 +1,6 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.bean.BeanPropertyMaker;
 import com.technoirarts.autumn.bean.BeanValueResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
@@ -12,12 +13,12 @@ import java.util.List;
  * @version 7/9/2015
  * @since 1.0
  */
-public class PropertyMaker {
+public class EvalPropertyMaker implements BeanPropertyMaker {
 
     private BeanValueResolver resolver;
     private List<PropertyEvaluator> evaluators;
 
-    public PropertyMaker(BeanValueResolver resolver) {
+    public EvalPropertyMaker(BeanValueResolver resolver) {
         this.resolver = resolver;
         this.evaluators = getAvailableEvaluators();
     }
@@ -34,7 +35,8 @@ public class PropertyMaker {
         return evaluators;
     }
 
-    public Object makeValue(Object property) throws PropertyEvaluationException {
+    @Override
+    public Object make(Object property) throws PropertyEvaluationException {
         for (PropertyEvaluator evaluator : evaluators) {
             if (evaluator.canEvaluate(property)) {
                 return evaluator.evaluate(property);

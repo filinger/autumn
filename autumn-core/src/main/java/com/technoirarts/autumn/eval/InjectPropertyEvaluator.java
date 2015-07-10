@@ -15,7 +15,7 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     private BeanValueResolver resolver;
 
-    public InjectPropertyEvaluator(PropertyMaker maker, BeanValueResolver resolver) {
+    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanValueResolver resolver) {
         super(maker);
         this.resolver = resolver;
     }

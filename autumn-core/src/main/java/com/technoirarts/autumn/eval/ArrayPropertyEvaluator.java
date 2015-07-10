@@ -13,7 +13,7 @@ import java.util.Collection;
  */
 public class ArrayPropertyEvaluator extends BasicPropertyEvaluator {
 
-    public ArrayPropertyEvaluator(PropertyMaker maker) {
+    public ArrayPropertyEvaluator(EvalPropertyMaker maker) {
         super(maker);
     }
 
@@ -28,7 +28,7 @@ public class ArrayPropertyEvaluator extends BasicPropertyEvaluator {
         Collection properties = (Collection) property;
         ArrayList evaluated = new ArrayList(properties.size());
         for (Object prop : properties) {
-            evaluated.add(maker.makeValue(prop));
+            evaluated.add(maker.make(prop));
         }
         return evaluated;
     }

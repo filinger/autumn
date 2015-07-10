@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class ClassPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    public ClassPropertyEvaluator(PropertyMaker maker) {
+    public ClassPropertyEvaluator(EvalPropertyMaker maker) {
         super(maker);
     }
 
@@ -26,7 +26,7 @@ public class ClassPropertyEvaluator extends DescriptorPropertyEvaluator {
     @Override
     public Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
         String className = (String) descriptor;
-        List constructorArguments = (List) maker.makeValue(rest.values());
+        List constructorArguments = (List) maker.make(rest.values());
         return constructObject(className, constructorArguments);
     }
 

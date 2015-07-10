@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator {
 
-    public DescriptorPropertyEvaluator(PropertyMaker maker) {
+    public DescriptorPropertyEvaluator(EvalPropertyMaker maker) {
         super(maker);
     }
 

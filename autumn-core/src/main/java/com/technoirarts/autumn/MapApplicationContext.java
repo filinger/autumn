@@ -1,7 +1,8 @@
 package com.technoirarts.autumn;
 
 import com.technoirarts.autumn.bean.Bean;
-import com.technoirarts.autumn.eval.PropertyMaker;
+import com.technoirarts.autumn.bean.BeanPropertyMaker;
+import com.technoirarts.autumn.eval.EvalPropertyMaker;
 import com.technoirarts.autumn.exception.ContextLoadException;
 
 import java.util.Iterator;
@@ -14,16 +15,16 @@ import java.util.Set;
  * @version 7/9/2015
  * @since 1.0
  */
-public abstract class EvalApplicationContext extends BasicApplicationContext {
+public abstract class MapApplicationContext extends BasicApplicationContext {
 
-    protected PropertyMaker maker;
+    protected BeanPropertyMaker maker;
 
     private Exception registerBeanException;
 
-    public EvalApplicationContext() {
+    public MapApplicationContext() {
         super();
 
-        this.maker = new PropertyMaker(this.resolver);
+        this.maker = new EvalPropertyMaker(this.resolver);
     }
 
     @Override
@@ -52,7 +53,7 @@ public abstract class EvalApplicationContext extends BasicApplicationContext {
         try {
             final String beanId = entry.getKey();
             final Object beanDescription = entry.getValue();
-            final Object beanValue = maker.makeValue(beanDescription);
+            final Object beanValue = maker.make(beanDescription);
             @SuppressWarnings("unchecked")
             final Bean<?> bean = new Bean(beanId, beanValue.getClass(), beanValue);
             registry.register(bean);

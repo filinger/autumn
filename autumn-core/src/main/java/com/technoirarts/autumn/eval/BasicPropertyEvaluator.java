@@ -10,9 +10,9 @@ import com.technoirarts.autumn.exception.PropertyEvaluationException;
  */
 public abstract class BasicPropertyEvaluator implements PropertyEvaluator {
 
-    protected final PropertyMaker maker;
+    protected final EvalPropertyMaker maker;
 
-    public BasicPropertyEvaluator(PropertyMaker maker) {
+    public BasicPropertyEvaluator(EvalPropertyMaker maker) {
         this.maker = maker;
     }
 
