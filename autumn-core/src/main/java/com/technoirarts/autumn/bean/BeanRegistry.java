@@ -1,6 +1,6 @@
 package com.technoirarts.autumn.bean;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Filinger
@@ -16,7 +16,9 @@ public interface BeanRegistry {
 
     Bean<?> findByType(String beanType);
 
+    List<Bean<?>> findOfType(String beanType);
+
     <T> Bean<T> findByType(Class<T> beanType);
 
-    <T> ArrayList<Bean<T>> findOfType(Class<T> beanType);
+    <T> List<Bean<T>> findOfType(Class<T> beanType);
 }

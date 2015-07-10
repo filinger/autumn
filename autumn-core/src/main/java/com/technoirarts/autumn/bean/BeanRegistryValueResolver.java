@@ -33,6 +33,15 @@ public class BeanRegistryValueResolver implements BeanValueResolver {
         return null;
     }
 
+    public List<?> getValuesByType(String beanType) {
+        List<Bean<?>> beans = registry.findOfType(beanType);
+        ArrayList<Object> values = new ArrayList<>(beans.size());
+        for (Bean<?> bean : beans) {
+            values.add(bean.getValue());
+        }
+        return values;
+    }
+    
     public <T> T getValueByType(Class<T> beanType) {
         Bean<T> bean = registry.findByType(beanType);
         if (bean != null) {

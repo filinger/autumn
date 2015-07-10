@@ -3,6 +3,7 @@ package com.technoirarts.autumn.bean;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Filinger
@@ -42,6 +43,17 @@ public class MapBeanRegistry implements BeanRegistry {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public List<Bean<?>> findOfType(String beanType) {
+        try {
+            Class clazz = Class.forName(beanType);
+            return findOfType(clazz);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    @Override
     public <T> Bean<T> findByType(Class<T> beanType) {
         Iterator<Bean<T>> beansOfType = findOfType(beanType).iterator();
         if (beansOfType.hasNext()) {
@@ -52,10 +64,10 @@ public class MapBeanRegistry implements BeanRegistry {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> ArrayList<Bean<T>> findOfType(Class<T> beanType) {
-        ArrayList<Bean<T>> filtered = new ArrayList<>();
+    public <T> List<Bean<T>> findOfType(Class<T> beanType) {
+        List<Bean<T>> filtered = new ArrayList<>();
         for (Bean<?> bean : beans.values()) {
-            if (bean.getType().isAssignableFrom(beanType)) {
+            if (beanType.isAssignableFrom(bean.getType())) {
                 filtered.add((Bean<T>) bean);
             }
         }

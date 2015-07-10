@@ -14,6 +14,8 @@ public interface BeanValueResolver {
 
     Object getValueByType(String beanType);
 
+    List<?> getValuesByType(String beanType);
+
     <T> T getValueByType(Class<T> beanType);
 
     <T> List<T> getValuesByType(Class<T> beanType);
