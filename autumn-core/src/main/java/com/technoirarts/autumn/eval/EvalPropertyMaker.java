@@ -35,6 +35,10 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
         return evaluators;
     }
 
+    public void add(PropertyEvaluator evaluator) {
+        evaluators.add(evaluator);
+    }
+
     @Override
     public Object make(Object property) throws PropertyEvaluationException {
         for (PropertyEvaluator evaluator : evaluators) {
