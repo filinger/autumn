@@ -3,8 +3,10 @@ package com.technoirarts.autumn.eval;
 import com.technoirarts.autumn.bean.BeanValueResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Filinger
@@ -49,8 +51,9 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
     @SuppressWarnings("unchecked")
     protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
         if (typeAdvice.isAssignableFrom(List.class)) {
-            String className = (String) descriptor;
-            return (T) resolver.getValuesByType(className);
+            return (T) resolver.getValuesByType((String) descriptor);
+        } else if (typeAdvice.isAssignableFrom(Set.class)) {
+            return (T) new HashSet<>(resolver.getValuesByType((String) descriptor));
         } else if (descriptor == null || String.class.cast(descriptor).isEmpty()) {
             return resolver.getValueByType(typeAdvice);
         } else {
