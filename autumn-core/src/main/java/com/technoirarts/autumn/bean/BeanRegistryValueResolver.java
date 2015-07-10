@@ -18,7 +18,7 @@ public class BeanRegistryValueResolver implements BeanValueResolver {
     }
 
     public Object getValueById(String beanId) {
-        Bean bean = registry.findById(beanId);
+        Bean<?> bean = registry.findById(beanId);
         if (bean != null) {
             return bean.getValue();
         }
@@ -26,7 +26,7 @@ public class BeanRegistryValueResolver implements BeanValueResolver {
     }
 
     public Object getValueByType(String beanType) {
-        Bean bean = registry.findByType(beanType);
+        Bean<?> bean = registry.findByType(beanType);
         if (bean != null) {
             return bean.getValue();
         }

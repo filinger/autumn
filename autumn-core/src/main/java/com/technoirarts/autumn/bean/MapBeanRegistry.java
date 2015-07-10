@@ -21,18 +21,18 @@ public class MapBeanRegistry implements BeanRegistry {
     }
 
     @Override
-    public void register(Bean bean) {
+    public void register(Bean<?> bean) {
         beanIdMap.put(bean.getId(), bean);
         beans.add(bean);
     }
 
     @Override
-    public Bean findById(String beanId) {
+    public Bean<?> findById(String beanId) {
         return beanIdMap.get(beanId);
     }
 
     @Override
-    public Bean findByType(String beanType) {
+    public Bean<?> findByType(String beanType) {
         try {
             return findByType(Class.forName(beanType));
         } catch (ClassNotFoundException e) {

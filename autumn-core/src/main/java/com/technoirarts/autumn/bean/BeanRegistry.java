@@ -10,11 +10,11 @@ import java.util.ArrayList;
  */
 public interface BeanRegistry {
 
-    void register(Bean bean);
+    void register(Bean<?> bean);
 
-    Bean findById(String beanId);
+    Bean<?> findById(String beanId);
 
-    Bean findByType(String beanType);
+    Bean<?> findByType(String beanType);
 
     <T> Bean<T> findByType(Class<T> beanType);
 
