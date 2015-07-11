@@ -4,11 +4,7 @@ import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Filinger
@@ -30,8 +26,9 @@ public class ClassPropertyEvaluator extends DescriptorPropertyEvaluator {
     @Override
     public Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
         String className = (String) descriptor;
-        List constructorArguments = (List) maker.make(rest.values());
-        return constructObject(className, constructorArguments);
+        Collection sortedArguments = new TreeMap<>(rest).values();
+        List evaluatedArguments = (List) maker.make(sortedArguments);
+        return constructObject(className, evaluatedArguments);
     }
 
     private Object constructObject(String className, Collection args) throws PropertyEvaluationException {
