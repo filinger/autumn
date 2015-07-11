@@ -3,7 +3,6 @@ package com.technoirarts.autumn.yaml;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.parser.Parser;
 import com.technoirarts.autumn.BasicApplicationContext;
-import com.technoirarts.autumn.bean.Bean;
 
 import java.io.Reader;
 import java.lang.reflect.Field;
@@ -64,12 +63,12 @@ public class YamlApplicationContext extends BasicApplicationContext {
     protected void processNode(Object node) {
         for (Map.Entry<String, Object> anchor : anchors.entrySet()) {
             if (anchor.getValue().equals(node)) {
-                registry.register(new Bean(anchor.getKey(), node.getClass(), node));
+                registry.register(anchor.getKey(), node);
                 return;
             }
 
         }
-        registry.register(new Bean(makeBeanId(), node.getClass(), node));
+        registry.register(makeBeanId(), node);
     }
 
     private String makeBeanId() {

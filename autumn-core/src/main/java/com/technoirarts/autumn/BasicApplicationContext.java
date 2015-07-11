@@ -1,8 +1,6 @@
 package com.technoirarts.autumn;
 
 import com.technoirarts.autumn.bean.BeanRegistry;
-import com.technoirarts.autumn.bean.BeanRegistryValueResolver;
-import com.technoirarts.autumn.bean.BeanValueResolver;
 import com.technoirarts.autumn.bean.MapBeanRegistry;
 import com.technoirarts.autumn.exception.ContextLoadException;
 
@@ -17,12 +15,10 @@ import java.util.List;
 public abstract class BasicApplicationContext implements ApplicationContext {
 
     protected BeanRegistry registry;
-    protected BeanValueResolver resolver;
     protected NodeReader reader;
 
     public BasicApplicationContext() {
         this.registry = new MapBeanRegistry();
-        this.resolver = new BeanRegistryValueResolver(this.registry);
     }
 
     protected abstract void processNode(Object node);
@@ -54,16 +50,16 @@ public abstract class BasicApplicationContext implements ApplicationContext {
 
     @Override
     public Object getBean(String id) {
-        return resolver.getValueById(id);
+        return registry.findById(id);
     }
 
     @Override
     public <T> T getBean(Class<T> type) {
-        return resolver.getValueByType(type);
+        return registry.findByType(type);
     }
 
     @Override
     public <T> List<T> getBeans(Class<T> type) {
-        return resolver.getValuesByType(type);
+        return registry.findOfType(type);
     }
 }

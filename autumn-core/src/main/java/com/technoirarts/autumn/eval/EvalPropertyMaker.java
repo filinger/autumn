@@ -1,7 +1,7 @@
 package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanPropertyMaker;
-import com.technoirarts.autumn.bean.BeanValueResolver;
+import com.technoirarts.autumn.bean.BeanRegistry;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.ArrayList;
@@ -15,11 +15,11 @@ import java.util.List;
  */
 public class EvalPropertyMaker implements BeanPropertyMaker {
 
-    private BeanValueResolver resolver;
+    private BeanRegistry registry;
     private List<PropertyEvaluator> evaluators;
 
-    public EvalPropertyMaker(BeanValueResolver resolver) {
-        this.resolver = resolver;
+    public EvalPropertyMaker(BeanRegistry registry) {
+        this.registry = registry;
         this.evaluators = getAvailableEvaluators();
     }
 
@@ -31,7 +31,7 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
         evaluators.add(new ArrayPropertyEvaluator(this));
         evaluators.add(new ConstructPropertyEvaluator(this));
         evaluators.add(new ClassPropertyEvaluator(this));
-        evaluators.add(new InjectPropertyEvaluator(this, resolver));
+        evaluators.add(new InjectPropertyEvaluator(this, registry));
         return evaluators;
     }
 

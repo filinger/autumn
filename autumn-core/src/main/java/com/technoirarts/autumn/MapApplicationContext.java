@@ -1,6 +1,5 @@
 package com.technoirarts.autumn;
 
-import com.technoirarts.autumn.bean.Bean;
 import com.technoirarts.autumn.bean.BeanPropertyMaker;
 import com.technoirarts.autumn.eval.EvalPropertyMaker;
 import com.technoirarts.autumn.exception.ContextLoadException;
@@ -24,7 +23,7 @@ public abstract class MapApplicationContext extends BasicApplicationContext {
     public MapApplicationContext() {
         super();
 
-        this.maker = new EvalPropertyMaker(this.resolver);
+        this.maker = new EvalPropertyMaker(this.registry);
     }
 
     @Override
@@ -54,9 +53,7 @@ public abstract class MapApplicationContext extends BasicApplicationContext {
             final String beanId = entry.getKey();
             final Object beanDescription = entry.getValue();
             final Object beanValue = maker.make(beanDescription);
-            @SuppressWarnings("unchecked")
-            final Bean<?> bean = new Bean(beanId, beanValue.getClass(), beanValue);
-            registry.register(bean);
+            registry.register(beanId, beanValue);
             return true;
         } catch (Exception e) {
             saveException(e);

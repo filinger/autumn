@@ -1,11 +1,9 @@
 package com.technoirarts.autumn.spel;
 
 import com.technoirarts.autumn.BasicApplicationContext;
-import com.technoirarts.autumn.bean.Bean;
 import com.technoirarts.autumn.exception.BeanConstructionException;
 import com.technoirarts.autumn.exception.BeanNotFoundException;
 import com.technoirarts.autumn.exception.ContextLoadException;
-import org.springframework.expression.BeanResolver;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -29,7 +27,7 @@ public class SpelApplicationContext extends BasicApplicationContext {
         this.parser = new SpelExpressionParser();
         this.context = new StandardEvaluationContext();
 
-        context.setBeanResolver((BeanResolver) resolver);
+        context.setBeanResolver(new SpelBeanResolver(this.registry));
     }
 
     @Override
@@ -60,7 +58,7 @@ public class SpelApplicationContext extends BasicApplicationContext {
             final String beanName = entry.getKey();
             final Object beanDescription = entry.getValue();
             final Object beanValue = evaluateProperty(beanDescription);
-            registry.register(new Bean(beanName, beanValue.getClass(), beanValue));
+            registry.register(beanName, beanValue);
             return true;
         } catch (BeanNotFoundException e) {
             return false;

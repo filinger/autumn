@@ -1,6 +1,6 @@
 package com.technoirarts.autumn.eval;
 
-import com.technoirarts.autumn.bean.BeanValueResolver;
+import com.technoirarts.autumn.bean.BeanRegistry;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.HashSet;
@@ -16,11 +16,11 @@ import java.util.Set;
  */
 public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    private BeanValueResolver resolver;
+    private BeanRegistry registry;
 
-    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanValueResolver resolver) {
+    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanRegistry registry) {
         super(maker);
-        this.resolver = resolver;
+        this.registry = registry;
     }
 
     @Override
@@ -31,11 +31,11 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
     @Override
     protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
         String idOrType = (String) descriptor;
-        Object resolved = resolver.getValueById(idOrType);
+        Object resolved = registry.findById(idOrType);
         if (resolved != null) {
             return resolved;
         }
-        resolved = resolver.getValueByType(idOrType);
+        resolved = registry.findByType(idOrType);
         if (resolved != null) {
             return resolved;
         }
@@ -51,11 +51,11 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
     @SuppressWarnings("unchecked")
     protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
         if (typeAdvice.isAssignableFrom(List.class)) {
-            return (T) resolver.getValuesByType((String) descriptor);
+            return (T) registry.findOfType((String) descriptor);
         } else if (typeAdvice.isAssignableFrom(Set.class)) {
-            return (T) new HashSet<>(resolver.getValuesByType((String) descriptor));
+            return (T) new HashSet<>(registry.findOfType((String) descriptor));
         } else if (descriptor == null || String.class.cast(descriptor).isEmpty()) {
-            return resolver.getValueByType(typeAdvice);
+            return registry.findByType(typeAdvice);
         } else {
             return (T) evaluateDescriptor(descriptor, rest);
         }

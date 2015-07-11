@@ -10,15 +10,15 @@ import java.util.List;
  */
 public interface BeanRegistry {
 
-    void register(Bean<?> bean);
+    void register(String beanId, Object bean);
 
-    Bean<?> findById(String beanId);
+    Object findById(String beanId);
 
-    Bean<?> findByType(String beanType);
+    Object findByType(String beanType);
 
-    List<Bean<?>> findOfType(String beanType);
+    List<?> findOfType(String beanType);
 
-    <T> Bean<T> findByType(Class<T> beanType);
+    <T> T findByType(Class<T> beanType);
 
-    <T> List<Bean<T>> findOfType(Class<T> beanType);
+    <T> List<T> findOfType(Class<T> beanType);
 }

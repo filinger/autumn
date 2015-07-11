@@ -13,28 +13,27 @@ import java.util.List;
  */
 public class MapBeanRegistry implements BeanRegistry {
 
-    private final HashMap<String, Bean<?>> beans;
+    private final HashMap<String, Object> beans;
 
     public MapBeanRegistry() {
         this.beans = new HashMap<>();
     }
 
     @Override
-    public void register(Bean<?> bean) {
-        String id = bean.getId();
-        if (beans.containsKey(id)) {
-            throw new IllegalStateException("there is already a registered bean with such id: " + id);
+    public void register(String beanId, Object bean) {
+        if (beans.containsKey(beanId)) {
+            throw new IllegalStateException("there is already a registered bean with such id: " + beanId);
         }
-        beans.put(id, bean);
+        beans.put(beanId, bean);
     }
 
     @Override
-    public Bean<?> findById(String beanId) {
+    public Object findById(String beanId) {
         return beans.get(beanId);
     }
 
     @Override
-    public Bean<?> findByType(String beanType) {
+    public Object findByType(String beanType) {
         try {
             return findByType(Class.forName(beanType));
         } catch (ClassNotFoundException e) {
@@ -43,19 +42,17 @@ public class MapBeanRegistry implements BeanRegistry {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Bean<?>> findOfType(String beanType) {
+    public List<?> findOfType(String beanType) {
         try {
-            Class clazz = Class.forName(beanType);
-            return findOfType(clazz);
+            return findOfType(Class.forName(beanType));
         } catch (ClassNotFoundException e) {
             return null;
         }
     }
 
     @Override
-    public <T> Bean<T> findByType(Class<T> beanType) {
-        Iterator<Bean<T>> beansOfType = findOfType(beanType).iterator();
+    public <T> T findByType(Class<T> beanType) {
+        Iterator<T> beansOfType = findOfType(beanType).iterator();
         if (beansOfType.hasNext()) {
             return beansOfType.next();
         }
@@ -64,11 +61,11 @@ public class MapBeanRegistry implements BeanRegistry {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<Bean<T>> findOfType(Class<T> beanType) {
-        List<Bean<T>> filtered = new ArrayList<>();
-        for (Bean<?> bean : beans.values()) {
-            if (beanType.isAssignableFrom(bean.getType())) {
-                filtered.add((Bean<T>) bean);
+    public <T> List<T> findOfType(Class<T> beanType) {
+        List<T> filtered = new ArrayList<>();
+        for (Object bean : beans.values()) {
+            if (beanType.isAssignableFrom(bean.getClass())) {
+                filtered.add((T) bean);
             }
         }
         return filtered;
