@@ -2,7 +2,9 @@ package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Filinger
@@ -17,27 +19,23 @@ public class IntPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+        return (T) Integer.valueOf((String) descriptor);
+    }
+
+    @Override
     protected String getDescriptor() {
         return "$int";
     }
 
     @Override
-    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
-        try {
-            return Integer.parseInt((String) descriptor);
-        } catch (NumberFormatException e) {
-            throw new PropertyEvaluationException(this, "cannot parse specified float: " + descriptor);
-        }
+    protected Set<Class<?>> getDescriptorTypes() {
+        return Collections.<Class<?>>singleton(String.class);
     }
 
     @Override
-    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
-        return canEvaluate(property) && (typeAdvice.isAssignableFrom(Integer.class) || typeAdvice.isAssignableFrom(int.class));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
-        return (T) evaluateDescriptor(descriptor, rest);
+    protected Set<Class<?>> getReturnTypes() {
+        return Collections.<Class<?>>singleton(Integer.class);
     }
 }

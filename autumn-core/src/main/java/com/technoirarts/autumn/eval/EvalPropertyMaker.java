@@ -2,6 +2,8 @@ package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanPropertyMaker;
 import com.technoirarts.autumn.bean.BeanRegistry;
+import com.technoirarts.autumn.bean.PackageRegistry;
+import com.technoirarts.autumn.bean.SetPackageRegistry;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.ArrayList;
@@ -15,11 +17,13 @@ import java.util.List;
  */
 public class EvalPropertyMaker implements BeanPropertyMaker {
 
-    private BeanRegistry registry;
-    private List<PropertyEvaluator> evaluators;
+    private final BeanRegistry beans;
+    private final PackageRegistry packages;
+    private final List<PropertyEvaluator> evaluators;
 
-    public EvalPropertyMaker(BeanRegistry registry) {
-        this.registry = registry;
+    public EvalPropertyMaker(BeanRegistry beans) {
+        this.beans = beans;
+        this.packages = new SetPackageRegistry();
         this.evaluators = getAvailableEvaluators();
     }
 
@@ -28,10 +32,12 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
         evaluators.add(new IntPropertyEvaluator(this));
         evaluators.add(new FloatPropertyEvaluator(this));
         evaluators.add(new BoolPropertyEvaluator(this));
-        evaluators.add(new ArrayPropertyEvaluator(this));
-        evaluators.add(new ConstructPropertyEvaluator(this));
-        evaluators.add(new ClassPropertyEvaluator(this));
-        evaluators.add(new InjectPropertyEvaluator(this, registry));
+        evaluators.add(new CollectionPropertyEvaluator(this));
+        evaluators.add(new BeanPropertyEvaluator(this));
+        evaluators.add(new ImportPropertyEvaluator(this, packages));
+        evaluators.add(new ClassPropertyEvaluator(this, packages));
+        evaluators.add(new NewPropertyEvaluator(this, packages));
+        evaluators.add(new InjectPropertyEvaluator(this, beans, packages));
         return evaluators;
     }
 
@@ -42,8 +48,8 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
     @Override
     public Object make(Object property) throws PropertyEvaluationException {
         for (PropertyEvaluator evaluator : evaluators) {
-            if (evaluator.canEvaluate(property)) {
-                return evaluator.evaluate(property);
+            if (evaluator.canEvaluate(property, Object.class)) {
+                return evaluator.evaluate(property, Object.class);
             }
         }
         return property;
@@ -53,7 +59,7 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
     @SuppressWarnings("unchecked")
     public <T> T make(Object property, Class<T> type) throws PropertyEvaluationException {
         for (PropertyEvaluator evaluator : evaluators) {
-            if (evaluator.canEvaluate(property)) {
+            if (evaluator.canEvaluate(property, type)) {
                 return evaluator.evaluate(property, type);
             }
         }

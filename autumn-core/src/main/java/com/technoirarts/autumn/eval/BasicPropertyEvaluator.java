@@ -1,6 +1,9 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.bean.Beans;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
+
+import java.util.Set;
 
 /**
  * @author Filinger
@@ -11,20 +14,29 @@ import com.technoirarts.autumn.exception.PropertyEvaluationException;
 public abstract class BasicPropertyEvaluator implements PropertyEvaluator {
 
     protected final EvalPropertyMaker maker;
+    protected final Set<Class<?>> returnTypes;
+    protected final Set<Class<?>> acceptTypes;
 
     public BasicPropertyEvaluator(EvalPropertyMaker maker) {
         this.maker = maker;
+        this.returnTypes = getReturnTypes();
+        this.acceptTypes = getAcceptTypes();
     }
 
     @Override
-    public Object evaluate(Object property) throws PropertyEvaluationException {
-        if (canEvaluate(property)) {
-            return checkedEvaluate(property);
-        }
-        throw new PropertyEvaluationException(this, "this evaluator is not intended for property: " + property);
+    public boolean canReturn(Class<?> valueType) {
+        return Beans.isAssignableFrom(valueType, returnTypes);
     }
 
-    protected abstract Object checkedEvaluate(Object property) throws PropertyEvaluationException;
+    @Override
+    public boolean canAccept(Class<?> propertyType) {
+        return Beans.isAssignableTo(propertyType, acceptTypes);
+    }
+
+    @Override
+    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
+        return canAccept(property.getClass()) && canReturn(typeAdvice);
+    }
 
     @Override
     public <T> T evaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException {
@@ -35,4 +47,8 @@ public abstract class BasicPropertyEvaluator implements PropertyEvaluator {
     }
 
     protected abstract <T> T checkedEvaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException;
+
+    protected abstract Set<Class<?>> getReturnTypes();
+
+    protected abstract Set<Class<?>> getAcceptTypes();
 }

@@ -1,5 +1,10 @@
+imports:
+  $import: com.technoirarts.autumn.bean
+
+---
+
 simpleBean:
-  $construct: { $class: com.technoirarts.autumn.bean.SimpleTestBean }
+  $bean: { $new: SimpleTestBean }
   name: SimpleTestBean
   scores:
     - $int: 1
@@ -9,14 +14,14 @@ simpleBean:
 ---
 
 closedBean:
-  $construct: { $class: com.technoirarts.autumn.bean.ClosedTestBean }
+  $bean: { $new: ClosedTestBean }
   name: ClosedTestBean
 
 ---
 
 immutableBean:
-  $construct:
-    $class: com.technoirarts.autumn.bean.ImmutableTestBean
+  $bean:
+    $new: ImmutableTestBean
     0: ImmutableTestBean
     1: { $int: 42 }
     2: { $inject: closedBean }
@@ -24,5 +29,5 @@ immutableBean:
 ---
 
 beanCollection:
-  $construct: { $class: com.technoirarts.autumn.bean.TestBeanCollection }
-  daughters: { $inject: com.technoirarts.autumn.bean.TestBean }
+  $bean: { $new: TestBeanCollection }
+  daughters: { $inject: TestBean }

@@ -1,9 +1,12 @@
 package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanRegistry;
+import com.technoirarts.autumn.bean.Beans;
+import com.technoirarts.autumn.bean.PackageRegistry;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,11 +19,63 @@ import java.util.Set;
  */
 public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    private BeanRegistry registry;
+    private final BeanRegistry registry;
+    private final PackageRegistry packages;
 
-    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanRegistry registry) {
+    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanRegistry registry, PackageRegistry packages) {
         super(maker);
         this.registry = registry;
+        this.packages = packages;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+        String idOrType = (String) descriptor;
+        if (idOrType.isEmpty()) {
+            return autoInject(typeAdvice);
+        } else if (Collection.class.isAssignableFrom(typeAdvice)) {
+            return findOfType(idOrType, typeAdvice);
+        } else {
+            return (T) findByIdOrType(idOrType);
+        }
+    }
+
+    private <T> T autoInject(Class<T> typeAdvice) throws PropertyEvaluationException {
+        throw new PropertyEvaluationException(this, "automatic inject is not currently implemented");
+    }
+
+    private Object findByIdOrType(String idOrType) throws PropertyEvaluationException {
+        Object resolved = registry.findById(idOrType);
+        if (resolved != null) {
+            return resolved;
+        }
+        return findByType(idOrType);
+    }
+
+    private Object findByType(String type) throws PropertyEvaluationException {
+        try {
+            Class<?> clazz = packages.findClass(type);
+            Object resolved = registry.findByType(clazz);
+            if (resolved != null) {
+                return resolved;
+            }
+        } catch (ClassNotFoundException e) {
+            throw new PropertyEvaluationException(this, "was unable to find bean type: " + type, e);
+        }
+        throw new PropertyEvaluationException(this, "was unable to find bean by type: " + type);
+    }
+
+    private <T> T findOfType(String beanType, Class<T> collectionType) throws PropertyEvaluationException {
+        try {
+            Class<?> clazz = packages.findClass(beanType);
+            List<?> beans = registry.findOfType(clazz);
+            return Beans.getCollectionInstance(beans, collectionType);
+        } catch (InstantiationException e) {
+            throw new PropertyEvaluationException(this, "can't instantiate collection of type: " + collectionType, e);
+        } catch (ClassNotFoundException e) {
+            throw new PropertyEvaluationException(this, "can't find bean type: " + beanType, e);
+        }
     }
 
     @Override
@@ -29,35 +84,12 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
-    protected Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException {
-        String idOrType = (String) descriptor;
-        Object resolved = registry.findById(idOrType);
-        if (resolved != null) {
-            return resolved;
-        }
-        resolved = registry.findByType(idOrType);
-        if (resolved != null) {
-            return resolved;
-        }
-        throw new PropertyEvaluationException(this, "was unable to find requested bean: " + descriptor);
+    protected Set<Class<?>> getDescriptorTypes() {
+        return Collections.<Class<?>>singleton(String.class);
     }
 
     @Override
-    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
-        return canEvaluate(property);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
-        if (typeAdvice.isAssignableFrom(List.class)) {
-            return (T) registry.findOfType((String) descriptor);
-        } else if (typeAdvice.isAssignableFrom(Set.class)) {
-            return (T) new HashSet<>(registry.findOfType((String) descriptor));
-        } else if (descriptor == null || String.class.cast(descriptor).isEmpty()) {
-            return registry.findByType(typeAdvice);
-        } else {
-            return (T) evaluateDescriptor(descriptor, rest);
-        }
+    protected Set<Class<?>> getReturnTypes() {
+        return Collections.<Class<?>>singleton(Beans.Any.class);
     }
 }

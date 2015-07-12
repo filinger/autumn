@@ -1,9 +1,12 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.bean.Beans;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Filinger
@@ -17,24 +20,18 @@ public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator
         super(maker);
     }
 
-    protected abstract String getDescriptor();
-
     @Override
     @SuppressWarnings("unchecked")
-    public boolean canEvaluate(Object property) {
-        return property instanceof Map && ((Map<String, Object>) property).containsKey(getDescriptor());
+    public boolean canEvaluate(Object property, Class<?> typeAdvice) {
+        boolean preCheck = super.canEvaluate(property, typeAdvice);
+        if (preCheck) {
+            Object descriptorValue = ((Map<String, Object>) property).get(getDescriptor());
+            if (descriptorValue != null) {
+                return Beans.isAssignableTo(descriptorValue.getClass(), getDescriptorTypes());
+            }
+        }
+        return false;
     }
-
-    @Override
-    protected Object checkedEvaluate(Object property) throws PropertyEvaluationException {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> properties = (Map<String, Object>) property;
-        Map<String, Object> propertiesCopy = new HashMap<>(properties);
-        Object descriptor = propertiesCopy.remove(getDescriptor());
-        return evaluateDescriptor(descriptor, propertiesCopy);
-    }
-
-    protected abstract Object evaluateDescriptor(Object descriptor, Map<String, Object> rest) throws PropertyEvaluationException;
 
     @Override
     protected <T> T checkedEvaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException {
@@ -45,5 +42,14 @@ public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator
         return evaluateDescriptor(descriptor, propertiesCopy, typeAdvice);
     }
 
+    @Override
+    protected Set<Class<?>> getAcceptTypes() {
+        return Collections.<Class<?>>singleton(Map.class);
+    }
+
     protected abstract <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException;
+
+    protected abstract String getDescriptor();
+
+    protected abstract Set<Class<?>> getDescriptorTypes();
 }
