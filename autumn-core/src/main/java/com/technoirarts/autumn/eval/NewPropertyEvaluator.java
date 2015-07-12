@@ -6,7 +6,6 @@ import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -31,10 +30,12 @@ public class NewPropertyEvaluator extends DescriptorPropertyEvaluator {
     protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
         String className = (String) descriptor;
         Collection sortedArguments = new TreeMap<>(rest).values();
-        Collection evaluatedArguments = maker.make(sortedArguments, Collection.class);
+        if (!sortedArguments.isEmpty()) {
+            sortedArguments = maker.make(sortedArguments, Collection.class);
+        }
         try {
             Class<?> clazz = packages.findClass(className);
-            return (T) Beans.getInstance(clazz, evaluatedArguments);
+            return (T) Beans.getInstance(clazz, sortedArguments);
         } catch (ReflectiveOperationException e) {
             throw new PropertyEvaluationException(this, "cannot instantiate class: " + className, e);
         }
