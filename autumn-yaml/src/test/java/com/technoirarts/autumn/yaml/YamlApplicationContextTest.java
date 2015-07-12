@@ -76,6 +76,6 @@ public class YamlApplicationContextTest {
         TestBean simpleBean = (TestBean) context.getBean("simpleBean");
         TestBean closedBean = (TestBean) context.getBean("closedBean");
         TestBean immutableBean = (TestBean) context.getBean("immutableBean");
-        assertThat(bean.daughters, hasItems(simpleBean, closedBean, immutableBean));
+        assertThat(bean.allTestBeans, hasItems(simpleBean, closedBean, immutableBean));
     }
 }

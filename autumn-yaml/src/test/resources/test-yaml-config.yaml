@@ -27,4 +27,4 @@ relative: *closedBean
 ---
 
 !bean!TestBeanCollection
-daughters: [ *simpleBean, *closedBean, *immutableBean ]
+allTestBeans: [ *simpleBean, *closedBean, *immutableBean ]

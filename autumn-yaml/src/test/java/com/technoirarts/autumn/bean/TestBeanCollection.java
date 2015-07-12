@@ -10,5 +10,5 @@ import java.util.Set;
  */
 public class TestBeanCollection {
 
-    public Set<TestBean> daughters;
+    public Set<TestBean> allTestBeans;
 }

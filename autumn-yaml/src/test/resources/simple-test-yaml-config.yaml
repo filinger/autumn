@@ -30,4 +30,4 @@ immutableBean:
 
 beanCollection:
   $bean: { $new: TestBeanCollection }
-  daughters: { $inject: TestBean }
+  allTestBeans: { $inject: TestBean }
