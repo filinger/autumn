@@ -4,21 +4,29 @@ Small application configuration framework, compatible with Android. Think of it 
 # autumn-core
 List of the special properties:
 ```yaml
-$int: 42                                      # indicates that the specified string should be parsed to Integer
+$int: 42
+# indicates that the specified string should be parsed to Integer
 
-$float: 34.69                                 # parses value to Float
+$float: 34.69
+# parses value to Float
 
-$bool: true                                   # treats value as Boolean
+$bool: true
+# treats value as Boolean
 
-$bean: { $int: 42 }                           # indicates that the entity should be treated as a bean instance; rest of the properties are considered bean properties
+$bean: { $int: 42 }
+# indicates that the entity should be treated as a bean instance; rest of the properties are considered bean properties
 
-$import: com.technoirarts.autumn.bean         # indicates that the specified string should be treated as package name and imported into the configuration context
+$import: com.technoirarts.autumn.bean
+# indicates that the specified string should be treated as package name and imported into the configuration context
 
-$class: com.technoirarts.autumn.bean.TestBean # converts classname value to class; uses packages that were imported with '$import' property
+$class: com.technoirarts.autumn.bean.TestBean
+# converts classname value to class; uses packages that were imported with '$import' property
 
-$new: java.lang.Integer                       # treats value as a classname and tries to make a new instance of that Class; rest of the properties are considered constructor arguments (see **autumn-yaml** for example)
+$new: java.lang.Integer
+# treats value as a classname and tries to make a new instance of that Class; rest of the properties are considered constructor arguments (see **autumn-yaml** for example)
 
-$inject: someOtherBean                        # this is a versatile property which will treat value either as a bean id, or a bean class, and will try to reference those bean(s)
+$inject: someOtherBean
+# this is a versatile property which will treat value either as a bean id, or a bean class, and will try to reference those bean(s)
 ```
 
 # autumn-yaml
