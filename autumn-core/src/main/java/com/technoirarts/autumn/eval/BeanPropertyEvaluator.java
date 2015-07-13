@@ -1,5 +1,6 @@
 package com.technoirarts.autumn.eval;
 
+import com.technoirarts.autumn.bean.Beans;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.lang.reflect.Field;
@@ -20,7 +21,7 @@ public class BeanPropertyEvaluator extends DescriptorPropertyEvaluator {
     }
 
     @Override
-    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
         T beanInstance = maker.make(descriptor, typeAdvice);
         setBeanProperties(beanInstance, rest);
         return beanInstance;
@@ -32,12 +33,17 @@ public class BeanPropertyEvaluator extends DescriptorPropertyEvaluator {
             for (Map.Entry<String, Object> property : properties.entrySet()) {
                 Field field = clazz.getDeclaredField(property.getKey());
                 field.setAccessible(true);
-                Object value = maker.make(property.getValue(), field.getType());
+                Beans.FieldType fieldType = new Beans.FieldType(field);
+                Object value = maker.make(property.getValue(), fieldType.type, fieldType.typeParameters);
                 field.set(instance, value);
             }
         } catch (ReflectiveOperationException e) {
             throw new PropertyEvaluationException(this, "cannot set bean property: " + instance.getClass(), e);
         }
+    }
+
+    private void doSomething() {
+
     }
 
     @Override

@@ -39,14 +39,14 @@ public abstract class BasicPropertyEvaluator implements PropertyEvaluator {
     }
 
     @Override
-    public <T> T evaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException {
+    public <T> T evaluate(Object property, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
         if (canEvaluate(property, typeAdvice)) {
-            return checkedEvaluate(property, typeAdvice);
+            return checkedEvaluate(property, typeAdvice, typeParameters);
         }
         throw new PropertyEvaluationException(this, "this evaluator is not intended for property: " + property + " and type: " + typeAdvice);
     }
 
-    protected abstract <T> T checkedEvaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException;
+    protected abstract <T> T checkedEvaluate(Object property, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException;
 
     protected abstract Set<Class<?>> getReturnTypes();
 

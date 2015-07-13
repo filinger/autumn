@@ -25,7 +25,7 @@ public class ImportPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
         String packageName = (String) descriptor;
         try {
             packages.register(packageName);

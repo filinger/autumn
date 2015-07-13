@@ -34,12 +34,12 @@ public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator
     }
 
     @Override
-    protected <T> T checkedEvaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException {
+    protected <T> T checkedEvaluate(Object property, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
         @SuppressWarnings("unchecked")
         Map<String, Object> properties = (Map<String, Object>) property;
         Map<String, Object> propertiesCopy = new HashMap<>(properties);
         Object descriptor = propertiesCopy.remove(getDescriptor());
-        return evaluateDescriptor(descriptor, propertiesCopy, typeAdvice);
+        return evaluateDescriptor(descriptor, propertiesCopy, typeAdvice, typeParameters);
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class DescriptorPropertyEvaluator extends BasicPropertyEvaluator
         return Collections.<Class<?>>singleton(Map.class);
     }
 
-    protected abstract <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException;
+    protected abstract <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException;
 
     protected abstract String getDescriptor();
 

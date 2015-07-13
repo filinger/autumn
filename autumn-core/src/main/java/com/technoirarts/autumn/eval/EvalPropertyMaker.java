@@ -29,6 +29,7 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
 
     private List<PropertyEvaluator> getAvailableEvaluators() {
         ArrayList<PropertyEvaluator> evaluators = new ArrayList<>();
+        evaluators.add(new PrimitivePropertyEvaluator(this));
         evaluators.add(new IntPropertyEvaluator(this));
         evaluators.add(new FloatPropertyEvaluator(this));
         evaluators.add(new BoolPropertyEvaluator(this));
@@ -57,10 +58,10 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T make(Object property, Class<T> type) throws PropertyEvaluationException {
+    public <T> T make(Object property, Class<T> type, Class<?>... typeParameters) throws PropertyEvaluationException {
         for (PropertyEvaluator evaluator : evaluators) {
             if (evaluator.canEvaluate(property, type)) {
-                return evaluator.evaluate(property, type);
+                return evaluator.evaluate(property, type, typeParameters);
             }
         }
         return (T) property; // Just try to cast it if nothing else worked.

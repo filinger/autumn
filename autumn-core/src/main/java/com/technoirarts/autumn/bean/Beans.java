@@ -1,7 +1,10 @@
 package com.technoirarts.autumn.bean;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,7 +117,49 @@ public class Beans {
                 }
             }
         }
-        throw new NoSuchMethodException("No suitable constructors are found for class: " + clazz + " with signature: " + Arrays.toString(signature));
+        throw new NoSuchMethodException("no suitable constructors are found for class: " + clazz + " with signature: " + Arrays.toString(signature));
+    }
+
+    public static class FieldType {
+        public Class<?> type;
+        public Class<?>[] typeParameters;
+
+        public FieldType(Field field) {
+            Type fieldType = field.getGenericType();
+            if (fieldType instanceof Class) {
+                setRawType((Class) fieldType);
+            } else if (fieldType instanceof ParameterizedType) {
+                setGenericType((ParameterizedType) fieldType);
+            } else {
+                throw new IllegalStateException("received field with unknown type: " + fieldType);
+            }
+        }
+
+        private void setRawType(Class rawType) {
+            this.type = rawType;
+            this.typeParameters = new Class<?>[0];
+        }
+
+        private void setGenericType(ParameterizedType type) {
+            if (type.getRawType() instanceof Class) {
+                this.type = (Class) type.getRawType();
+                this.typeParameters = getTypeArguments(type.getActualTypeArguments());
+            } else {
+                throw new IllegalStateException("received field with unknown type: " + type.getRawType());
+            }
+        }
+
+        public static Class<?>[] getTypeArguments(Type[] actualTypeArguments) {
+            Class<?>[] simpleTypeArguments = new Class<?>[actualTypeArguments.length];
+            for (int i = 0; i < actualTypeArguments.length; ++i) {
+                if (actualTypeArguments[i] instanceof Class) {
+                    simpleTypeArguments[i] = (Class) actualTypeArguments[i];
+                    continue;
+                }
+                throw new RuntimeException("specified type has generics as arguments: " + actualTypeArguments[i]);
+            }
+            return simpleTypeArguments;
+        }
     }
 
     /**

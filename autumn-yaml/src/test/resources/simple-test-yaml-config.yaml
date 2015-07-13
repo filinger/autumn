@@ -6,10 +6,7 @@ imports:
 simpleBean:
   $bean: { $new: SimpleTestBean }
   name: SimpleTestBean
-  scores:
-    - $int: 1
-    - $int: 2
-    - $int: 3
+  scores: [1, 2, 3]
 
 ---
 

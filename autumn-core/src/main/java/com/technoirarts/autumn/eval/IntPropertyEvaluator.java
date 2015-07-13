@@ -20,7 +20,7 @@ public class IntPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
         return (T) Integer.valueOf((String) descriptor);
     }
 

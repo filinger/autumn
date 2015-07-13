@@ -38,11 +38,12 @@ public interface PropertyEvaluator {
     /**
      * Tries to evaluate specified property to the value of specified type.
      *
+     * @param <T>        desired return value type, unknown if typeAdvice is null
      * @param property   property to evaluate
      * @param typeAdvice class of the desired return value type, may be null
-     * @param <T>        desired return value type, unknown if typeAdvice is null
+     * @param typeParameters generic type parameters if any
      * @return evaluated property
      * @throws PropertyEvaluationException if property can't be evaluated
      */
-    <T> T evaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException;
+    <T> T evaluate(Object property, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException;
 }

@@ -23,8 +23,12 @@ public class CollectionPropertyEvaluator extends BasicPropertyEvaluator {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T checkedEvaluate(Object property, Class<T> typeAdvice) throws PropertyEvaluationException {
-        ArrayList evaluatedProperties = evaluateProperties((Collection) property);
+    public <T> T checkedEvaluate(Object property, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
+        Class<?> elementType = Object.class;
+        if (typeParameters.length == 1) {
+            elementType = typeParameters[0];
+        }
+        ArrayList evaluatedProperties = evaluateProperties((Collection) property, elementType);
         try {
             return Beans.getCollectionInstance(evaluatedProperties, typeAdvice);
         } catch (InstantiationException e) {
@@ -32,10 +36,10 @@ public class CollectionPropertyEvaluator extends BasicPropertyEvaluator {
         }
     }
 
-    protected ArrayList<Object> evaluateProperties(Collection properties) throws PropertyEvaluationException {
-        ArrayList<Object> evaluated = new ArrayList<>(properties.size());
+    protected <T> ArrayList<T> evaluateProperties(Collection properties, Class<T> elementType) throws PropertyEvaluationException {
+        ArrayList<T> evaluated = new ArrayList<>(properties.size());
         for (Object prop : properties) {
-            evaluated.add(maker.make(prop));
+            evaluated.add(maker.make(prop, elementType));
         }
         return evaluated;
     }

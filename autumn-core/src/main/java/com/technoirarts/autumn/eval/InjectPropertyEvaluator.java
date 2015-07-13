@@ -30,7 +30,7 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice) throws PropertyEvaluationException {
+    protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
         String idOrType = (String) descriptor;
         if (idOrType.isEmpty()) {
             return autoInject(typeAdvice);
