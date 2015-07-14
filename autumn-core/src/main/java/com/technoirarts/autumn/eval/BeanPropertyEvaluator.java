@@ -31,7 +31,7 @@ public class BeanPropertyEvaluator extends DescriptorPropertyEvaluator {
         try {
             Class clazz = instance.getClass();
             for (Map.Entry<String, Object> property : properties.entrySet()) {
-                Field field = clazz.getDeclaredField(property.getKey());
+                Field field = Beans.findField(property.getKey(), clazz);
                 field.setAccessible(true);
                 Beans.FieldType fieldType = new Beans.FieldType(field);
                 Object value = maker.make(property.getValue(), fieldType.type, fieldType.typeParameters);
