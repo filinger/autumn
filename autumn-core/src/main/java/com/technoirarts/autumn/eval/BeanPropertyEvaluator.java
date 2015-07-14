@@ -42,10 +42,6 @@ public class BeanPropertyEvaluator extends DescriptorPropertyEvaluator {
         }
     }
 
-    private void doSomething() {
-
-    }
-
     @Override
     protected String getDescriptor() {
         return "$bean";
