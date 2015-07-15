@@ -1,6 +1,7 @@
 package com.technoirarts.autumn.spel;
 
 import com.technoirarts.autumn.bean.BeanRegistry;
+import com.technoirarts.autumn.bean.Beans;
 import org.springframework.expression.AccessException;
 import org.springframework.expression.BeanResolver;
 import org.springframework.expression.EvaluationContext;
@@ -25,7 +26,11 @@ public class SpelBeanResolver implements BeanResolver {
         if (beanValue != null) {
             return beanValue;
         } else {
-            return registry.findByType(beanName);
+            try {
+                return registry.findByType(Beans.forName(beanName));
+            } catch (ClassNotFoundException e) {
+                return null;
+            }
         }
     }
 }

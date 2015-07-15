@@ -33,24 +33,6 @@ public class MapBeanRegistry implements BeanRegistry {
     }
 
     @Override
-    public Object findByType(String beanType) {
-        try {
-            return findByType(Class.forName(beanType));
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public List<?> findOfType(String beanType) {
-        try {
-            return findOfType(Class.forName(beanType));
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
-    }
-
-    @Override
     public <T> T findByType(Class<T> beanType) {
         Iterator<T> beansOfType = findOfType(beanType).iterator();
         if (beansOfType.hasNext()) {

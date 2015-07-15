@@ -14,10 +14,6 @@ public interface BeanRegistry {
 
     Object findById(String beanId);
 
-    Object findByType(String beanType);
-
-    List<?> findOfType(String beanType);
-
     <T> T findByType(Class<T> beanType);
 
     <T> List<T> findOfType(Class<T> beanType);
