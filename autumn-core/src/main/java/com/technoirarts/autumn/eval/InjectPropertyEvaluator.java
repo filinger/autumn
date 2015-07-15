@@ -2,7 +2,7 @@ package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanRegistry;
 import com.technoirarts.autumn.bean.Beans;
-import com.technoirarts.autumn.bean.PackageRegistry;
+import com.technoirarts.autumn.bean.ClassNameResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.Collection;
@@ -20,12 +20,12 @@ import java.util.Set;
 public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     private final BeanRegistry registry;
-    private final PackageRegistry packages;
+    private final ClassNameResolver classResolver;
 
-    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanRegistry registry, PackageRegistry packages) {
+    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanRegistry registry, ClassNameResolver classResolver) {
         super(maker);
         this.registry = registry;
-        this.packages = packages;
+        this.classResolver = classResolver;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     private Object findByType(String type) throws PropertyEvaluationException {
         try {
-            Class<?> clazz = packages.findClass(type);
+            Class<?> clazz = classResolver.findClass(type);
             Object resolved = registry.findByType(clazz);
             if (resolved != null) {
                 return resolved;
@@ -68,7 +68,7 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     private <T> T findOfType(String beanType, Class<T> collectionType) throws PropertyEvaluationException {
         try {
-            Class<?> clazz = packages.findClass(beanType);
+            Class<?> clazz = classResolver.findClass(beanType);
             List<?> beans = registry.findOfType(clazz);
             return Beans.getCollectionInstance(beans, collectionType);
         } catch (InstantiationException e) {

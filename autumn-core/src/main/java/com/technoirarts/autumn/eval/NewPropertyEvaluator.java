@@ -1,7 +1,7 @@
 package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.Beans;
-import com.technoirarts.autumn.bean.PackageRegistry;
+import com.technoirarts.autumn.bean.ClassNameResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.Collection;
@@ -18,11 +18,11 @@ import java.util.TreeMap;
  */
 public class NewPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    private final PackageRegistry packages;
+    private final ClassNameResolver classResolver;
 
-    public NewPropertyEvaluator(EvalPropertyMaker maker, PackageRegistry packages) {
+    public NewPropertyEvaluator(EvalPropertyMaker maker, ClassNameResolver classResolver) {
         super(maker);
-        this.packages = packages;
+        this.classResolver = classResolver;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class NewPropertyEvaluator extends DescriptorPropertyEvaluator {
             sortedArguments = maker.make(sortedArguments, Collection.class);
         }
         try {
-            Class<?> clazz = packages.findClass(className);
+            Class<?> clazz = classResolver.findClass(className);
             return (T) Beans.getInstance(clazz, sortedArguments);
         } catch (ReflectiveOperationException e) {
             throw new PropertyEvaluationException(this, "cannot instantiate class: " + className, e);

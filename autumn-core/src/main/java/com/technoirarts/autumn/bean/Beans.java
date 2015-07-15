@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -59,19 +58,14 @@ public class Beans {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    public static Class<?> forName(String className) throws ClassNotFoundException {
-        return forName(className, Collections.EMPTY_LIST);
-    }
-
-    public static Class<?> forName(String className, Collection<Package> packages) throws ClassNotFoundException {
+    public static Class<?> forName(String className, Collection<Package> packages, ClassLoader classLoader) throws ClassNotFoundException {
         try {
-            return Class.forName(className);
+            return classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
             for (Package pack : packages) {
-                String canonicalClassName = pack.getName() + "." + className;
+                String classFqn = pack.getName() + "." + className;
                 try {
-                    return Class.forName(canonicalClassName);
+                    return classLoader.loadClass(classFqn);
                 } catch (ClassNotFoundException ignored) {
                 }
             }

@@ -1,7 +1,7 @@
 package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.Beans;
-import com.technoirarts.autumn.bean.PackageRegistry;
+import com.technoirarts.autumn.bean.ClassNameResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.Collections;
@@ -16,11 +16,11 @@ import java.util.Set;
  */
 public class ImportPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    private final PackageRegistry packages;
+    private final ClassNameResolver classResolver;
 
-    public ImportPropertyEvaluator(EvalPropertyMaker maker, PackageRegistry packages) {
+    public ImportPropertyEvaluator(EvalPropertyMaker maker, ClassNameResolver classResolver) {
         super(maker);
-        this.packages = packages;
+        this.classResolver = classResolver;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ImportPropertyEvaluator extends DescriptorPropertyEvaluator {
     protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
         String packageName = (String) descriptor;
         try {
-            packages.register(packageName);
+            classResolver.addPackage(packageName);
         } catch (IllegalArgumentException e) {
             throw new PropertyEvaluationException(this, "can't find package with name: " + packageName, e);
         }

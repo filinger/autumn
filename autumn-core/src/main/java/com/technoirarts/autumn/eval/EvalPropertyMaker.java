@@ -2,8 +2,8 @@ package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanPropertyMaker;
 import com.technoirarts.autumn.bean.BeanRegistry;
-import com.technoirarts.autumn.bean.PackageRegistry;
-import com.technoirarts.autumn.bean.SetPackageRegistry;
+import com.technoirarts.autumn.bean.CachingClassNameResolver;
+import com.technoirarts.autumn.bean.ClassNameResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.ArrayList;
@@ -18,12 +18,12 @@ import java.util.List;
 public class EvalPropertyMaker implements BeanPropertyMaker {
 
     private final BeanRegistry beans;
-    private final PackageRegistry packages;
+    private final ClassNameResolver classResolver;
     private final List<PropertyEvaluator> evaluators;
 
     public EvalPropertyMaker(BeanRegistry beans) {
         this.beans = beans;
-        this.packages = new SetPackageRegistry();
+        this.classResolver = new CachingClassNameResolver();
         this.evaluators = getAvailableEvaluators();
     }
 
@@ -35,10 +35,10 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
         evaluators.add(new BoolPropertyEvaluator(this));
         evaluators.add(new CollectionPropertyEvaluator(this));
         evaluators.add(new BeanPropertyEvaluator(this));
-        evaluators.add(new ImportPropertyEvaluator(this, packages));
-        evaluators.add(new ClassPropertyEvaluator(this, packages));
-        evaluators.add(new NewPropertyEvaluator(this, packages));
-        evaluators.add(new InjectPropertyEvaluator(this, beans, packages));
+        evaluators.add(new ImportPropertyEvaluator(this, classResolver));
+        evaluators.add(new ClassPropertyEvaluator(this, classResolver));
+        evaluators.add(new NewPropertyEvaluator(this, classResolver));
+        evaluators.add(new InjectPropertyEvaluator(this, beans, classResolver));
         return evaluators;
     }
 
