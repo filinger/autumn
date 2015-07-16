@@ -2,11 +2,11 @@ package com.technoirarts.autumn.eval;
 
 import com.technoirarts.autumn.bean.BeanRegistry;
 import com.technoirarts.autumn.bean.Beans;
-import com.technoirarts.autumn.bean.ClassNameResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,61 +20,49 @@ import java.util.Set;
 public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     private final BeanRegistry registry;
-    private final ClassNameResolver classResolver;
 
-    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanRegistry registry, ClassNameResolver classResolver) {
+    public InjectPropertyEvaluator(EvalPropertyMaker maker, BeanRegistry registry) {
         super(maker);
         this.registry = registry;
-        this.classResolver = classResolver;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
-        String idOrType = (String) descriptor;
-        if (idOrType.isEmpty()) {
-            return autoInject(typeAdvice);
-        } else if (Collection.class.isAssignableFrom(typeAdvice)) {
-            return findOfType(idOrType, typeAdvice);
-        } else {
-            return (T) findByIdOrType(idOrType);
+        if (descriptor instanceof String) {
+            return (T) getById((String) descriptor);
+        } else if (descriptor instanceof Map) {
+            Class<?> clazz = maker.make(descriptor, Class.class);
+            if (Collection.class.isAssignableFrom(typeAdvice)) {
+                return getByType(clazz, typeAdvice);
+            }
+            return (T) getByType(clazz);
         }
+        throw new PropertyEvaluationException(this, "received descriptor of unknown type: " + descriptor);
     }
 
-    private <T> T autoInject(Class<T> typeAdvice) throws PropertyEvaluationException {
-        throw new PropertyEvaluationException(this, "automatic inject is not currently implemented");
-    }
-
-    private Object findByIdOrType(String idOrType) throws PropertyEvaluationException {
-        Object resolved = registry.findById(idOrType);
+    private Object getById(String id) throws PropertyEvaluationException {
+        Object resolved = registry.findById(id);
         if (resolved != null) {
             return resolved;
         }
-        return findByType(idOrType);
+        throw new PropertyEvaluationException(this, "was unable to find bean by id: " + id);
     }
 
-    private Object findByType(String type) throws PropertyEvaluationException {
-        try {
-            Class<?> clazz = classResolver.findClass(type);
-            Object resolved = registry.findByType(clazz);
-            if (resolved != null) {
-                return resolved;
-            }
-        } catch (ClassNotFoundException e) {
-            throw new PropertyEvaluationException(this, "was unable to find bean type: " + type, e);
+    private Object getByType(Class<?> type) throws PropertyEvaluationException {
+        Object resolved = registry.findByType(type);
+        if (resolved != null) {
+            return resolved;
         }
         throw new PropertyEvaluationException(this, "was unable to find bean by type: " + type);
     }
 
-    private <T> T findOfType(String beanType, Class<T> collectionType) throws PropertyEvaluationException {
+    private <T> T getByType(Class<?> beanType, Class<T> collectionType) throws PropertyEvaluationException {
         try {
-            Class<?> clazz = classResolver.findClass(beanType);
-            List<?> beans = registry.findOfType(clazz);
+            List<?> beans = registry.findOfType(beanType);
             return Beans.getCollectionInstance(beans, collectionType);
         } catch (InstantiationException e) {
             throw new PropertyEvaluationException(this, "can't instantiate collection of type: " + collectionType, e);
-        } catch (ClassNotFoundException e) {
-            throw new PropertyEvaluationException(this, "can't find bean type: " + beanType, e);
         }
     }
 
@@ -85,7 +73,10 @@ public class InjectPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     @Override
     protected Set<Class<?>> getDescriptorTypes() {
-        return Collections.<Class<?>>singleton(String.class);
+        Set<Class<?>> types = new HashSet<>();
+        types.add(String.class);
+        types.add(Map.class);
+        return types;
     }
 
     @Override

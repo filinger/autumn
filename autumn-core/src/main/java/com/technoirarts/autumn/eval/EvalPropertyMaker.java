@@ -38,7 +38,7 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
         evaluators.add(new ImportPropertyEvaluator(this, classResolver));
         evaluators.add(new ClassPropertyEvaluator(this, classResolver));
         evaluators.add(new NewPropertyEvaluator(this, classResolver));
-        evaluators.add(new InjectPropertyEvaluator(this, beans, classResolver));
+        evaluators.add(new InjectPropertyEvaluator(this, beans));
         return evaluators;
     }
 

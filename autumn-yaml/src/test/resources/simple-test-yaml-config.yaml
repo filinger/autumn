@@ -25,5 +25,5 @@ immutableBean:
 ---
 
 beanCollection:
-  $bean: { $new: TestBeanCollection } # new TestBeanCollection();
-  allTestBeans: { $inject: TestBean } # beanCollection.allTestBeans = new TestBean[]{ simpleBean, closedBean, immutableBean } // '$inject' will first try to find a bean by specified id, if no such bean is found it will try to satisfy the dependency by class
+  $bean: { $new: TestBeanCollection }             # new TestBeanCollection();
+  allTestBeans: { $inject: { $class: TestBean } } # beanCollection.allTestBeans = new TestBean[]{ simpleBean, closedBean, immutableBean } // '$inject' can accept a class instance and will try to satisfy the dependency by it
