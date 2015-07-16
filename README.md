@@ -78,13 +78,13 @@ assert allTestBeans.size() == 2;
 ```yaml
 someSimpleBean:
   $bean: { $new: com.technoirarts.autumn.bean.SimpleTestBean }
-  name: SimpleTestBean
-  scores: [1, 2, 3,]
+  name: some string
+  scores: [1, 2, 3]
 
 otherImmutableBean:
   $bean:
     $new: com.technoirarts.autumn.bean.ImmutableTestBean
-    0: ImmutableTestBean
+    0: another string value
     1: { $int: 42 }
     2: { $inject: someSimpleBean }
 ```
