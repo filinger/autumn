@@ -1,7 +1,95 @@
-# autumn
+# About
 Small application configuration framework, compatible with Android. Think of it as a mini-Spring. Currently it supports configurations written in YAML, using special properties to instantiate new beans, inject properties etc. Annotation-driven configuration will be added soon.
 
-# autumn-core
+# Usage
+## Maven
+```xml
+<repositories>
+  <repository>
+    <id>central</id>
+    <name>bintray</name>
+    <url>http://jcenter.bintray.com</url>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>com.technoirarts.autumn</groupId>
+    <artifactId>autumn-yaml</artifactId>
+    <version>0.1.1c</version>
+  </dependency>
+</dependencies>
+```
+## Gradle
+```gradle
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.technoirarts.autumn:autumn-yaml:0.1.1c'
+}
+```
+## Java
+### Beans
+```java
+public interface TestBean {
+}
+```
+```java
+public class SimpleTestBean implements TestBean {
+
+    private String name;
+    private List<Integer> scores;
+}
+```
+```java
+public class ImmutableTestBean implements TestBean {
+
+    private final String name;
+    private final Integer age;
+    private final TestBean relative;
+
+    public ImmutableTestBean(String name, Integer age, TestBean relative) {
+        this.name = name;
+        this.age = age;
+        this.relative = relative;
+    }
+}
+```
+### Context
+```java
+InputStream stream = getClass().getClassLoader().getResourceAsStream("simple-test-yaml-config.yaml");
+Reader reader = new InputStreamReader(stream);
+ApplicationContext context = new SimpleYamlApplicationContext(reader);
+        
+context.loadAll();
+
+Object someSimpleBean = context.getBean("someSimpleBean"); // gets bean instance by id
+SimpleTestBean simpleTestBean = context.getBean(SimpleTestBean.class); // gets bean instance by class
+
+assert someSimpleBean == simpleTestBean;
+
+List<TestBean> allTestBeans = context.getBeans(TestBean.class); // gets all bean instances of class
+
+assert allTestBeans.size() == 2;
+```
+## Yaml
+```yaml
+someSimpleBean:
+  $bean: { $new: com.technoirarts.autumn.bean.SimpleTestBean }
+  name: SimpleTestBean
+  scores: [1, 2, 3,]
+
+otherImmutableBean:
+  $bean:
+    $new: com.technoirarts.autumn.bean.ImmutableTestBean
+    0: ImmutableTestBean
+    1: { $int: 42 }
+    2: { $inject: someSimpleBean }
+```
+# Details
+## autumn-core
 List of the special properties:
 ```yaml
 $int: 42
@@ -29,7 +117,7 @@ $inject: someOtherBean
 # this is a versatile property which will treat value either as a bean id, or a bean class, and will try to reference those bean(s)
 ```
 
-# autumn-yaml
+## autumn-yaml
 Example given:
 ```yaml
 imports: # describes a new entity with id 'imports'
