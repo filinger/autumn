@@ -28,12 +28,13 @@ public class EvalPropertyMaker implements BeanPropertyMaker {
     }
 
     private List<PropertyEvaluator> getAvailableEvaluators() {
-        ArrayList<PropertyEvaluator> evaluators = new ArrayList<>();
+        List<PropertyEvaluator> evaluators = new ArrayList<>();
         evaluators.add(new PrimitivePropertyEvaluator(this));
         evaluators.add(new IntPropertyEvaluator(this));
         evaluators.add(new FloatPropertyEvaluator(this));
         evaluators.add(new BoolPropertyEvaluator(this));
         evaluators.add(new CollectionPropertyEvaluator(this));
+        evaluators.add(new InitPropertyEvaluator(this));
         evaluators.add(new BeanPropertyEvaluator(this));
         evaluators.add(new ImportPropertyEvaluator(this, classResolver));
         evaluators.add(new ClassPropertyEvaluator(this, classResolver));

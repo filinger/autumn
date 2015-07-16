@@ -1,7 +1,12 @@
 package com.technoirarts.autumn.yaml;
 
 import com.technoirarts.autumn.ApplicationContext;
-import com.technoirarts.autumn.bean.*;
+import com.technoirarts.autumn.bean.ClosedTestBean;
+import com.technoirarts.autumn.bean.ImmutableTestBean;
+import com.technoirarts.autumn.bean.InitializingBean;
+import com.technoirarts.autumn.bean.SimpleTestBean;
+import com.technoirarts.autumn.bean.TestBean;
+import com.technoirarts.autumn.bean.TestBeanCollection;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +18,7 @@ import java.io.Reader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * @author Filinger
@@ -40,6 +46,7 @@ public class SimpleYamlApplicationContextTest {
         testSimpleBean(context);
         testClosedBean(context);
         testImmutableBean(context);
+        testInitializingBean(context);
         testBeanCollection(context);
     }
 
@@ -59,6 +66,12 @@ public class SimpleYamlApplicationContextTest {
         assertThat(bean.getName(), equalTo("ImmutableTestBean"));
         assertThat(bean.getAge(), equalTo(42));
         assertThat(bean.getRelative(), Matchers.<TestBean>is(context.getBean(ClosedTestBean.class)));
+    }
+
+    private void testInitializingBean(ApplicationContext context) {
+        InitializingBean bean = context.getBean(InitializingBean.class);
+        assertThat(bean.getBeanRef(), notNullValue());
+        assertThat(bean.getName(), equalTo(bean.getBeanRef().getName()));
     }
 
     private void testBeanCollection(ApplicationContext context) {
