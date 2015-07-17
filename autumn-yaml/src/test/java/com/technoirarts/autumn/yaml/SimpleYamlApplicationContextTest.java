@@ -14,11 +14,10 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author Filinger
@@ -48,6 +47,7 @@ public class SimpleYamlApplicationContextTest {
         testImmutableBean(context);
         testInitializingBean(context);
         testBeanCollection(context);
+        testBeanFactory(context);
     }
 
     private void testSimpleBean(ApplicationContext context) {
@@ -80,5 +80,11 @@ public class SimpleYamlApplicationContextTest {
         TestBean closedBean = (TestBean) context.getBean("closedBean");
         TestBean immutableBean = (TestBean) context.getBean("immutableBean");
         assertThat(bean.allTestBeans, hasItems(simpleBean, closedBean, immutableBean));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void testBeanFactory(ApplicationContext context) {
+        List<TestBean> factoredBeans = (List<TestBean>) context.getBean("factoredBeans");
+        assertThat(factoredBeans, Matchers.<TestBean>hasItems(hasProperty("name", is("FactoredBean"))));
     }
 }

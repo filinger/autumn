@@ -32,3 +32,16 @@ initializingBean:
 beanCollection:
   $bean: { $new: TestBeanCollection }             # new TestBeanCollection();
   allTestBeans: { $inject: { $class: TestBean } } # beanCollection.allTestBeans = new TestBean[]{ simpleBean, closedBean, immutableBean, initializingBean } // '$inject' can accept a class instance and will try to satisfy the dependency by it
+
+---
+
+beanFactory:
+  $bean: { $new: BeanFactory }
+  beansName: FactoredBean
+
+---
+
+factoredBeans:
+  - { $factory: beanFactory.getSimpleBean }
+  - { $factory: beanFactory.getImmutableBean }
+
