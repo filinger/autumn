@@ -58,14 +58,14 @@ public class Beans {
         return false;
     }
 
-    public static Class<?> forName(String className, Collection<Package> packages) throws ClassNotFoundException {
+    public static Class<?> forName(String className, Collection<Package> packages, ClassLoader classLoader) throws ClassNotFoundException {
         try {
-            return Class.forName(className);
+            return classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {
             for (Package pack : packages) {
-                String canonicalClassName = pack.getName() + "." + className;
+                String classFqn = pack.getName() + "." + className;
                 try {
-                    return Class.forName(canonicalClassName);
+                    return classLoader.loadClass(classFqn);
                 } catch (ClassNotFoundException ignored) {
                 }
             }
@@ -120,6 +120,18 @@ public class Beans {
         throw new NoSuchMethodException("no suitable constructors are found for class: " + clazz + " with signature: " + Arrays.toString(signature));
     }
 
+    public static Field findField(String fieldName, Class clazz) throws NoSuchFieldException {
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            Class superclass = clazz.getSuperclass();
+            if (superclass != null) {
+                return findField(fieldName, superclass);
+            }
+            throw e;
+        }
+    }
+
     public static class FieldType {
         public Class<?> type;
         public Class<?>[] typeParameters;
@@ -135,6 +147,18 @@ public class Beans {
             }
         }
 
+        public static Class<?>[] getTypeArguments(Type[] actualTypeArguments) {
+            Class<?>[] simpleTypeArguments = new Class<?>[actualTypeArguments.length];
+            for (int i = 0; i < actualTypeArguments.length; ++i) {
+                if (actualTypeArguments[i] instanceof Class) {
+                    simpleTypeArguments[i] = (Class) actualTypeArguments[i];
+                    continue;
+                }
+                throw new RuntimeException("specified type has generics as arguments: " + actualTypeArguments[i]);
+            }
+            return simpleTypeArguments;
+        }
+
         private void setRawType(Class rawType) {
             this.type = rawType;
             this.typeParameters = new Class<?>[0];
@@ -147,18 +171,6 @@ public class Beans {
             } else {
                 throw new IllegalStateException("received field with unknown type: " + type.getRawType());
             }
-        }
-
-        public static Class<?>[] getTypeArguments(Type[] actualTypeArguments) {
-            Class<?>[] simpleTypeArguments = new Class<?>[actualTypeArguments.length];
-            for (int i = 0; i < actualTypeArguments.length; ++i) {
-                if (actualTypeArguments[i] instanceof Class) {
-                    simpleTypeArguments[i] = (Class) actualTypeArguments[i];
-                    continue;
-                }
-                throw new RuntimeException("specified type has generics as arguments: " + actualTypeArguments[i]);
-            }
-            return simpleTypeArguments;
         }
     }
 

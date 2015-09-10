@@ -1,40 +1,41 @@
 package com.technoirarts.autumn.eval;
 
-import com.technoirarts.autumn.bean.ClassNameResolver;
 import com.technoirarts.autumn.exception.PropertyEvaluationException;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Filinger
- * @author $Author$ (current maintainer)
- * @version $Revision$, $Date$
+ * @author Filinger (current maintainer)
+ * @version 7/16/2015
  * @since 1.0
  */
-public class ClassPropertyEvaluator extends DescriptorPropertyEvaluator {
+public class InitPropertyEvaluator extends DescriptorPropertyEvaluator {
 
-    private final ClassNameResolver resolver;
-
-    public ClassPropertyEvaluator(EvalPropertyMaker maker, ClassNameResolver resolver) {
+    public InitPropertyEvaluator(EvalPropertyMaker maker) {
         super(maker);
-        this.resolver = resolver;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected <T> T evaluateDescriptor(Object descriptor, Map<String, Object> rest, Class<T> typeAdvice, Class<?>... typeParameters) throws PropertyEvaluationException {
+        String init = (String) descriptor;
+        Object object = maker.make(rest);
         try {
-            return (T) resolver.findClass((String) descriptor);
-        } catch (ClassNotFoundException e) {
-            throw new PropertyEvaluationException(this, "cannot find class", e);
+            Method initMethod = object.getClass().getDeclaredMethod(init);
+            initMethod.invoke(object);
+        } catch (ReflectiveOperationException e) {
+            throw new PropertyEvaluationException(this, "can't initialize object: " + object + " with method: " + init, e);
         }
+        return (T) object;
     }
 
     @Override
     protected String getDescriptor() {
-        return "$class";
+        return "$init";
     }
 
     @Override
@@ -44,6 +45,6 @@ public class ClassPropertyEvaluator extends DescriptorPropertyEvaluator {
 
     @Override
     protected Set<Class<?>> getReturnTypes() {
-        return Collections.<Class<?>>singleton(Class.class);
+        return Collections.<Class<?>>singleton(Object.class);
     }
 }

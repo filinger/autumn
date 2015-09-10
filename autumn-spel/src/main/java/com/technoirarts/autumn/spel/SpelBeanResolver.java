@@ -25,7 +25,11 @@ public class SpelBeanResolver implements BeanResolver {
         if (beanValue != null) {
             return beanValue;
         } else {
-            return registry.findByType(beanName);
+            try {
+                return registry.findByType(Class.forName(beanName));
+            } catch (ClassNotFoundException e) {
+                return null;
+            }
         }
     }
 }

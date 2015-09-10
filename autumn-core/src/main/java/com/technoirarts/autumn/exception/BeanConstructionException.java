@@ -1,8 +1,10 @@
 package com.technoirarts.autumn.exception;
 
 /**
- * @author i.samborskiy
- * @date 03.07.2015
+ * @author Nilera
+ * @author Nilera (current maintainer)
+ * @version 03.07.2015
+ * @since 1.0
  */
 public class BeanConstructionException extends ContextLoadException {
 

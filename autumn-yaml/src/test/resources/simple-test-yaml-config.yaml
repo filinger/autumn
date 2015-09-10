@@ -22,8 +22,26 @@ immutableBean:
     1: { $int: 42 }            # new Integer(42), // second constructor argument, which is described by another special property '$int', yielding us new Integer
     2: { $inject: closedBean } # closedBean); // third constructor argument, wich is described by '$inject', thus giving us a reference to previously described 'closedBean' entity
 
+initializingBean:
+  $bean: { $new: InitializingBean } # new InitializingBean();
+  $init: doInit                     # initializingBean.doInit() // called after all properties are set
+  beanRef: { $inject: simpleBean }  # initializingBean.beanRef = simpleBean
+
 ---
 
 beanCollection:
-  $bean: { $new: TestBeanCollection } # new TestBeanCollection();
-  allTestBeans: { $inject: TestBean } # beanCollection.allTestBeans = new TestBean[]{ simpleBean, closedBean, immutableBean } // '$inject' will first try to find a bean by specified id, if no such bean is found it will try to satisfy the dependency by class
+  $bean: { $new: TestBeanCollection }             # new TestBeanCollection();
+  allTestBeans: { $inject: { $class: TestBean } } # beanCollection.allTestBeans = new TestBean[]{ simpleBean, closedBean, immutableBean, initializingBean } // '$inject' can accept a class instance and will try to satisfy the dependency by it
+
+---
+
+beanFactory:
+  $bean: { $new: BeanFactory }
+  beansName: FactoredBean
+
+---
+
+factoredBeans:
+  - { $factory: beanFactory.getSimpleBean }
+  - { $factory: beanFactory.getImmutableBean }
+
